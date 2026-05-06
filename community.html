@@ -90,6 +90,23 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 }
 @keyframes splashHint{from{opacity:0}to{opacity:1}}
 @keyframes splashBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@keyframes floatCycle{
+  0%,100%{opacity:0;transform:translateY(8px)}
+  15%,70%{opacity:1;transform:translateY(0)}
+  88%{opacity:0;transform:translateY(-5px)}
+}
+.splash-floats{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.splash-float{position:absolute;max-width:140px;animation:floatCycle 5s ease infinite}
+.splash-float-text{
+  font-family:'Instrument Sans',sans-serif;
+  font-size:11px;line-height:1.55;color:rgba(255,255,255,0.28);
+  font-style:italic;
+}
+.splash-float-meta{
+  font-family:'Instrument Sans',sans-serif;
+  font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(255,255,255,0.16);margin-top:5px;
+}
 
 /* WORD CAROUSEL */
 .wordCarousel{
@@ -281,6 +298,26 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 
 
 <div id="splash">
+
+  <div class="splash-floats">
+    <div class="splash-float" style="top:9%;left:50%;transform:translateX(-60%);animation-delay:0s;text-align:center">
+      <div class="splash-float-text">"He has stories that aren't in any book."</div>
+      <div class="splash-float-meta">Hassan · Utheemu</div>
+    </div>
+    <div class="splash-float" style="top:32%;left:4%;animation-delay:2s;max-width:110px">
+      <div class="splash-float-text">"The sound of the loom is the island waking up."</div>
+      <div class="splash-float-meta">Fathimath · Kinbidhoo</div>
+    </div>
+    <div class="splash-float" style="top:34%;right:4%;animation-delay:0.9s;text-align:right;max-width:110px">
+      <div class="splash-float-text">"That gap is worth documenting."</div>
+      <div class="splash-float-meta">Aminath · Utheemu</div>
+    </div>
+    <div class="splash-float" style="bottom:10%;left:50%;transform:translateX(-40%);animation-delay:1.5s;text-align:center">
+      <div class="splash-float-text">"Most of these stories live only in memory."</div>
+      <div class="splash-float-meta">Ismail · Laamu</div>
+    </div>
+  </div>
+
   <div class="splash-label">Your Island</div>
   <div class="splash-clip">
     <ul id="splash-ul">
