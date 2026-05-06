@@ -102,6 +102,14 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 .activity-text{font-size:13px;line-height:1.65;color:var(--mid)}
 .activity-likes{font-size:11px;color:var(--soft);margin-top:8px}
 
+/* INSTAGRAM CAROUSEL */
+.ig-carousel{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -20px;padding:0 20px}
+.ig-carousel::-webkit-scrollbar{display:none}
+.ig-track{display:flex;gap:16px;width:max-content;padding-bottom:4px}
+.ig-slide{width:300px;flex-shrink:0}
+.ig-placeholder{display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--line);min-height:300px}
+.ig-placeholder-inner{text-align:center;padding:24px}
+
 /* BANNER */
 .banner{margin:24px 20px;padding:28px 24px;border:2px solid #000}
 .banner-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--soft);margin-bottom:12px}
@@ -258,6 +266,27 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
   </div>
 </section>
 
+<section class="section">
+  <div class="section-head">
+    <span class="section-title">From the Field</span>
+    <a class="section-link" href="https://www.instagram.com/thelocalliving" target="_blank">@thelocalliving →</a>
+  </div>
+  <div class="ig-carousel">
+    <div class="ig-track">
+      <div class="ig-slide">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DUIPDP9knEx/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);margin:0;max-width:100%;min-width:0;padding:0;width:100%"></blockquote>
+      </div>
+      <div class="ig-slide ig-placeholder">
+        <div class="ig-placeholder-inner">
+          <div style="font-size:24px;margin-bottom:10px">📍</div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">More stories coming</div>
+          <div style="font-size:12px;color:var(--soft)">Follow @thelocalliving</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="banner">
   <div class="banner-eyebrow">For locals</div>
   <div class="banner-title">Is your island represented?</div>
@@ -334,5 +363,6 @@ document.getElementById('search').addEventListener('input',function(){
   render(q?ISLANDS.filter(i=>i.name.toLowerCase().includes(q)||i.atoll.toLowerCase().includes(q)):ISLANDS);
 });
 </script>
+<script async src="//www.instagram.com/embed.js"></script>
 </body>
 </html>
