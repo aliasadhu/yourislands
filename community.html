@@ -103,12 +103,29 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 .activity-likes{font-size:11px;color:var(--soft);margin-top:8px}
 
 /* INSTAGRAM CAROUSEL */
-.ig-carousel{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -20px;padding:0 20px}
+.ig-carousel{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  margin:0 -20px;
+  scroll-snap-type:x mandatory;
+}
 .ig-carousel::-webkit-scrollbar{display:none}
-.ig-track{display:flex;gap:16px;width:max-content;padding-bottom:4px}
-.ig-slide{width:300px;flex-shrink:0}
-.ig-placeholder{display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--line);min-height:300px}
+.ig-track{display:flex;gap:0}
+.ig-slide{
+  width:100vw;flex-shrink:0;
+  scroll-snap-align:start;
+  padding:0 20px;
+}
+.ig-slide .instagram-media{min-width:0 !important;width:100% !important;max-width:100% !important}
+.ig-placeholder{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:1px solid var(--line);
+  min-height:400px;margin:0 20px;
+}
 .ig-placeholder-inner{text-align:center;padding:24px}
+.ig-dots{display:flex;justify-content:center;gap:6px;padding:14px 0 4px}
+.ig-dot{width:6px;height:6px;border-radius:50%;background:var(--line);border:none;padding:0;cursor:pointer}
+.ig-dot.active{background:#000}
 
 /* BANNER */
 .banner{margin:24px 20px;padding:28px 24px;border:2px solid #000}
@@ -271,19 +288,24 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
     <span class="section-title">From the Field</span>
     <a class="section-link" href="https://www.instagram.com/thelocalliving" target="_blank">@thelocalliving →</a>
   </div>
-  <div class="ig-carousel">
+  <div class="ig-carousel" id="ig-carousel">
     <div class="ig-track">
       <div class="ig-slide">
-        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DUIPDP9knEx/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);margin:0;max-width:100%;min-width:0;padding:0;width:100%"></blockquote>
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DUIPDP9knEx/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);margin:0 auto;max-width:100%;min-width:0;padding:0;width:100%"></blockquote>
       </div>
-      <div class="ig-slide ig-placeholder">
-        <div class="ig-placeholder-inner">
-          <div style="font-size:24px;margin-bottom:10px">📍</div>
-          <div style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">More stories coming</div>
-          <div style="font-size:12px;color:var(--soft)">Follow @thelocalliving</div>
+      <div class="ig-slide" style="display:flex;align-items:stretch">
+        <div class="ig-placeholder" style="flex:1;margin:0 20px">
+          <div class="ig-placeholder-inner">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px">More coming</div>
+            <div style="font-size:12px;color:var(--soft)">Follow @thelocalliving</div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+  <div class="ig-dots">
+    <button class="ig-dot active" onclick="scrollSlide(0)"></button>
+    <button class="ig-dot" onclick="scrollSlide(1)"></button>
   </div>
 </section>
 
@@ -362,6 +384,17 @@ document.getElementById('search').addEventListener('input',function(){
   const q=this.value.trim().toLowerCase();
   render(q?ISLANDS.filter(i=>i.name.toLowerCase().includes(q)||i.atoll.toLowerCase().includes(q)):ISLANDS);
 });
+</script>
+<script>
+function scrollSlide(i){
+  const c=document.getElementById('ig-carousel');
+  c.scrollTo({left:i*window.innerWidth,behavior:'smooth'});
+  document.querySelectorAll('.ig-dot').forEach((d,j)=>d.classList.toggle('active',i===j));
+}
+document.getElementById('ig-carousel').addEventListener('scroll',function(){
+  const i=Math.round(this.scrollLeft/window.innerWidth);
+  document.querySelectorAll('.ig-dot').forEach((d,j)=>d.classList.toggle('active',i===j));
+},{passive:true});
 </script>
 <script async src="//www.instagram.com/embed.js"></script>
 </body>
