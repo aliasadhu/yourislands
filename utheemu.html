@@ -8,92 +8,90 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#050505;font-family:'Instrument Sans',sans-serif;color:#F5F5F2;-webkit-font-smoothing:antialiased}
-:root{--w:#F5F5F2;--dim:rgba(245,245,242,0.45);--faint:rgba(245,245,242,0.18);--line:rgba(245,245,242,0.08)}
-@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}
+html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-webkit-font-smoothing:antialiased}
+:root{--black:#000;--white:#fff;--mid:#555;--soft:#999;--line:#E8E8E8;--surface:#F5F5F5}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* Header */
-.header{position:sticky;top:0;z-index:100;background:#050505;border-bottom:1px solid var(--line);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between}
-.back{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);text-decoration:none;-webkit-tap-highlight-color:transparent}
-.back:active{color:var(--w)}
-.logo{height:22px;width:auto;display:block;filter:brightness(0) invert(1)}
+.header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--line);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.back{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--soft);text-decoration:none;-webkit-tap-highlight-color:transparent}
+.back:active{color:#000}
+.logo{height:20px;width:auto;display:block;filter:brightness(0)}
 
 /* Hero */
 .hero{padding:40px 20px 36px;border-bottom:1px solid var(--line);animation:fadeUp 0.5s ease forwards}
 .island-meta{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.atoll-tag{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);padding:4px 10px}
-.trip-tag{font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--dim)}
-.island-name{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(52px,14vw,80px);font-weight:800;line-height:0.9;letter-spacing:-0.035em;color:var(--w);text-transform:uppercase;margin-bottom:16px}
-.island-tagline{font-size:15px;line-height:1.6;color:var(--dim);font-style:italic;margin-bottom:24px}
+.atoll-tag{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--soft);border:1px solid #000;padding:4px 10px}
+.trip-tag{font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--soft)}
+.island-name{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(52px,14vw,80px);font-weight:800;line-height:0.9;letter-spacing:-0.035em;color:#000;text-transform:uppercase;margin-bottom:16px}
+.island-tagline{font-size:15px;line-height:1.6;color:var(--mid);font-style:italic;margin-bottom:24px}
 .themes{display:flex;flex-wrap:wrap;gap:8px}
-.theme{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);padding:5px 12px}
+.theme{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--soft);border:1px solid var(--line);padding:5px 12px}
 
 /* About */
 .about{padding:32px 20px;border-bottom:1px solid var(--line)}
-.section-label{font-size:10px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
-.about-text{font-size:15px;line-height:1.75;color:var(--dim)}
+.section-label{font-size:10px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--soft);margin-bottom:16px}
+.about-text{font-size:15px;line-height:1.75;color:var(--mid)}
 .about-text p+p{margin-top:14px}
 
 /* Highlight fact */
-.fact{margin-top:24px;padding:18px 20px;border-left:2px solid rgba(245,245,242,0.2);background:rgba(245,245,242,0.02)}
-.fact-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
-.fact-text{font-size:14px;line-height:1.65;color:var(--dim)}
+.fact{margin-top:24px;padding:18px 20px;border-left:2px solid #000;background:var(--surface)}
+.fact-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--soft);margin-bottom:8px}
+.fact-text{font-size:14px;line-height:1.65;color:var(--mid)}
 
 /* Community */
 .community{padding:32px 20px}
 .community-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;flex-wrap:wrap;gap:8px}
-.community-count{font-size:11px;color:var(--faint)}
+.community-count{font-size:11px;color:var(--soft)}
 
 /* Filter tabs */
 .filters{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
-.filter-btn{flex-shrink:0;background:transparent;border:none;color:var(--faint);font-family:'Instrument Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:12px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;-webkit-tap-highlight-color:transparent;white-space:nowrap}
-.filter-btn.active{color:var(--w);border-bottom-color:var(--w)}
+.filter-btn{flex-shrink:0;background:transparent;border:none;color:var(--soft);font-family:'Instrument Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:12px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.filter-btn.active{color:#000;border-bottom-color:#000}
 
 /* Contribution cards */
 .contrib-list{display:flex;flex-direction:column}
 .contrib{padding:22px 0;border-bottom:1px solid var(--line)}
 .contrib:last-child{border-bottom:none}
 .contrib-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
-.contrib-author{font-size:13px;font-weight:600;color:var(--w);letter-spacing:-0.01em}
-.contrib-role{font-size:11px;color:var(--faint)}
-.contrib-type{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--faint)}
-.contrib-time{font-size:10px;color:var(--faint)}
-.contrib-body{font-size:14px;line-height:1.65;color:var(--dim);margin-bottom:12px}
+.contrib-author{font-size:13px;font-weight:700;color:#000;letter-spacing:-0.01em}
+.contrib-role{font-size:11px;color:var(--soft)}
+.contrib-type{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--soft)}
+.contrib-time{font-size:10px;color:var(--soft)}
+.contrib-body{font-size:14px;line-height:1.65;color:var(--mid);margin-bottom:12px}
 .contrib-footer{display:flex;align-items:center;gap:16px}
-.like-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line);padding:5px 12px;cursor:pointer;color:var(--faint);font-size:11px;font-family:'Instrument Sans',sans-serif;-webkit-tap-highlight-color:transparent}
-.like-btn:active{border-color:var(--dim);color:var(--dim)}
+.like-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line);padding:5px 12px;cursor:pointer;color:var(--soft);font-size:11px;font-family:'Instrument Sans',sans-serif;-webkit-tap-highlight-color:transparent}
+.like-btn:active{border-color:#000;color:#000}
 .contrib-category-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
 /* Contribute CTA */
-.contribute-cta{margin:0 20px 32px;padding:20px;border:1px solid var(--line);background:rgba(245,245,242,0.02)}
-.cta-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
-.cta-text{font-size:14px;line-height:1.6;color:var(--dim);margin-bottom:16px}
-.cta-btn{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--w);background:transparent;border:1px solid rgba(245,245,242,0.3);padding:12px 20px;cursor:pointer;font-family:'Instrument Sans',sans-serif;-webkit-tap-highlight-color:transparent;width:100%;justify-content:center}
-.cta-btn:active{background:rgba(245,245,242,0.05)}
+.contribute-cta{margin:0 20px 32px;padding:24px;border:2px solid #000;background:#fff}
+.cta-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.cta-text{font-size:14px;line-height:1.6;color:var(--mid);margin-bottom:16px}
+.cta-btn{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#fff;background:#000;border:none;padding:14px 20px;cursor:pointer;font-family:'Instrument Sans',sans-serif;-webkit-tap-highlight-color:transparent;width:100%;justify-content:center}
 
 /* Footer */
-.footer{padding:24px 20px 48px;border-top:1px solid var(--line);font-size:11px;color:var(--faint);display:flex;justify-content:space-between}
+.footer{padding:24px 20px 56px;border-top:1px solid var(--line);font-size:11px;color:var(--soft);display:flex;justify-content:space-between}
 
 /* Modal */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(5,5,5,0.85);z-index:200;align-items:flex-end;justify-content:center}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex}
-.modal{background:#0e0e0e;border:1px solid var(--line);border-bottom:none;padding:28px 20px 40px;width:100%;max-width:560px;animation:fadeUp 0.3s ease forwards}
-.modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:var(--w);margin-bottom:6px}
-.modal-sub{font-size:13px;color:var(--dim);margin-bottom:24px}
+.modal{background:#fff;border:1.5px solid #000;border-bottom:none;padding:28px 20px 40px;width:100%;max-width:560px;animation:fadeUp 0.3s ease forwards}
+.modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:#000;margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--mid);margin-bottom:24px}
 .type-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:20px}
-.type-btn{background:rgba(245,245,242,0.03);border:1px solid var(--line);padding:14px 16px;text-align:left;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
-.type-btn.selected{border-color:rgba(245,245,242,0.35);background:rgba(245,245,242,0.06)}
-.type-btn-label{font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--w);margin-bottom:3px}
-.type-btn-desc{font-size:12px;color:var(--faint)}
-.field-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;display:block}
-.field{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);padding:10px 0;font-size:15px;color:var(--w);font-family:'Instrument Sans',sans-serif;outline:none;margin-bottom:18px}
-.field::placeholder{color:var(--faint)}
+.type-btn{background:#fff;border:1px solid var(--line);padding:14px 16px;text-align:left;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
+.type-btn.selected{border-color:#000;background:var(--surface)}
+.type-btn-label{font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#000;margin-bottom:3px}
+.type-btn-desc{font-size:12px;color:var(--soft)}
+.field-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--soft);margin-bottom:8px;display:block}
+.field{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);padding:10px 0;font-size:15px;color:#000;font-family:'Instrument Sans',sans-serif;outline:none;margin-bottom:18px}
+.field::placeholder{color:var(--soft)}
 textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px;margin-bottom:18px}
 .modal-actions{display:flex;gap:10px}
-.modal-cancel{flex:1;background:transparent;border:1px solid var(--line);padding:14px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);cursor:pointer;font-family:'Instrument Sans',sans-serif}
-.modal-submit{flex:2;background:var(--w);border:none;padding:14px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#050505;cursor:pointer;font-family:'Instrument Sans',sans-serif}
+.modal-cancel{flex:1;background:transparent;border:1px solid var(--line);padding:14px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--mid);cursor:pointer;font-family:'Instrument Sans',sans-serif}
+.modal-submit{flex:2;background:#000;border:none;padding:14px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;cursor:pointer;font-family:'Instrument Sans',sans-serif}
 
 @media(min-width:640px){
   .hero{padding:52px 40px 44px}
@@ -176,7 +174,7 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
       <p class="contrib-body">Ibrahim Manikufaanu, 78, is the keeper of Utheemu Ganduvaru. He's been there every morning for 40 years — not as a guide, just as someone who belongs. He knows every beam and every stone and has stories about the palace that aren't in any book. Approach him before 8am when it's quiet.</p>
       <div class="contrib-footer">
         <button class="like-btn" onclick="like(this)">♡ <span>14</span></button>
-        <span class="contrib-time" style="font-size:10px;color:var(--faint)">3 days ago</span>
+        <span class="contrib-time" style="font-size:10px;color:var(--soft)">3 days ago</span>
       </div>
     </div>
 
@@ -191,7 +189,7 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
       <p class="contrib-body">Every school child here learns the story of Thakurufaanu — but the version taught in Malé schools and the version told on this island are different. The local oral account has details that were edited out of the official history. That gap is worth documenting before the elders who carry it are gone.</p>
       <div class="contrib-footer">
         <button class="like-btn" onclick="like(this)">♡ <span>21</span></button>
-        <span class="contrib-time" style="font-size:10px;color:var(--faint)">5 days ago</span>
+        <span class="contrib-time" style="font-size:10px;color:var(--soft)">5 days ago</span>
       </div>
     </div>
 
@@ -206,7 +204,7 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
       <p class="contrib-body">The dhoni repair yard on the east shore. Three or four men work there at any given time, using techniques passed down without instruction manuals — no written plans, just hands and memory. The tools they use are older than anyone alive. Come at dawn when the light hits the wood.</p>
       <div class="contrib-footer">
         <button class="like-btn" onclick="like(this)">♡ <span>9</span></button>
-        <span class="contrib-time" style="font-size:10px;color:var(--faint)">1 week ago</span>
+        <span class="contrib-time" style="font-size:10px;color:var(--soft)">1 week ago</span>
       </div>
     </div>
 
@@ -221,7 +219,7 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
       <p class="contrib-body">Utheemu has no guesthouse and no resort nearby. Visitors who come here come specifically for the history — and most only stay two hours. There's a real story in what it means to be a heritage island in a country where tourism means beaches and overwater villas. The people here feel that tension daily.</p>
       <div class="contrib-footer">
         <button class="like-btn" onclick="like(this)">♡ <span>17</span></button>
-        <span class="contrib-time" style="font-size:10px;color:var(--faint)">2 weeks ago</span>
+        <span class="contrib-time" style="font-size:10px;color:var(--soft)">2 weeks ago</span>
       </div>
     </div>
 
@@ -314,7 +312,7 @@ function submitContrib(){
   const typeLabels = {story:'▲ Story Idea', character:'● Local Character', practice:'◆ Cultural Practice'};
   const el = document.createElement('div');
   el.className = 'contrib'; el.dataset.type = type;
-  el.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${name||'Anonymous'}</span></div><span class="contrib-type">${typeLabels[type]}</span></div><p class="contrib-body">${body}</p><div class="contrib-footer"><button class="like-btn" onclick="like(this)">♡ <span>0</span></button><span style="font-size:10px;color:var(--faint)">Just now</span></div>`;
+  el.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${name||'Anonymous'}</span></div><span class="contrib-type">${typeLabels[type]}</span></div><p class="contrib-body">${body}</p><div class="contrib-footer"><button class="like-btn" onclick="like(this)">♡ <span>0</span></button><span style="font-size:10px;color:var(--soft)">Just now</span></div>`;
   document.getElementById('contrib-list').prepend(el);
   closeModal();
   document.getElementById('f-name').value='';
