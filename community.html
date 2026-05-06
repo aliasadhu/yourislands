@@ -94,7 +94,7 @@ html,body{background:#FAF7F2;font-family:'Instrument Sans',sans-serif;color:#1C1
 .island-list{display:flex;flex-direction:column;margin-top:8px}
 .island-row{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent;background:var(--bg)}
 .island-row:active{background:var(--surface)}
-.island-icon{width:40px;height:40px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--soft);letter-spacing:0.06em;flex-shrink:0}
+.island-icon{width:40px;height:40px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--mid);flex-shrink:0;direction:rtl;font-family:'MV Dawit',serif}
 .island-info{flex:1;min-width:0}
 .island-name{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.02em;color:var(--text);margin-bottom:2px}
 .island-atoll{font-size:11px;color:var(--soft)}
@@ -236,18 +236,18 @@ html,body{background:#FAF7F2;font-family:'Instrument Sans',sans-serif;color:#1C1
 
 <script>
 const ISLANDS=[
-  {code:'HA', name:'Utheemu',    atoll:'Haa Alifu',    contribs:4, href:'utheemu.html'},
-  {code:'Th', name:'Kinbidhoo', atoll:'Thaa',          contribs:7, href:'utheemu.html'},
-  {code:'Gn', name:'Fuvahmulah',atoll:'Gnaviyani',     contribs:3, href:'#'},
-  {code:'S',  name:'Addu',      atoll:'Seenu',         contribs:5, href:'#'},
-  {code:'HDh',name:'Vaikaradhoo',atoll:'Haa Dhaalu',   contribs:3, href:'#'},
-  {code:'V',  name:'Felidhoo',  atoll:'Vaavu',         contribs:2, href:'#'},
-  {code:'AA', name:'Thoddoo',   atoll:'Alif Alif',     contribs:1, href:'#'},
-  {code:'B',  name:'Thulaadhoo',atoll:'Baa',           contribs:0, href:'#'},
-  {code:'L',  name:'Gan',       atoll:'Laamu',         contribs:0, href:'#'},
-  {code:'Th', name:'Veymandoo', atoll:'Thaa',          contribs:0, href:'#'},
-  {code:'GDh',name:'Gadhdhoo',  atoll:'Gaafu Dhaalu',  contribs:0, href:'#'},
-  {code:'F',  name:'Nilandhoo', atoll:'Faafu',         contribs:0, href:'#'},
+  {code:'ހއ', name:'Utheemu',     atoll:'Haa Alifu',   contribs:4, href:'utheemu.html'},
+  {code:'ތ',  name:'Kinbidhoo',   atoll:'Thaa',         contribs:7, href:'utheemu.html'},
+  {code:'ޏ',  name:'Fuvahmulah',  atoll:'Gnaviyani',    contribs:3, href:'#'},
+  {code:'ސ',  name:'Addu',        atoll:'Seenu',        contribs:5, href:'#'},
+  {code:'ހދ', name:'Vaikaradhoo', atoll:'Haa Dhaalu',   contribs:3, href:'#'},
+  {code:'ވ',  name:'Felidhoo',    atoll:'Vaavu',        contribs:2, href:'#'},
+  {code:'އއ', name:'Thoddoo',     atoll:'Alif Alif',    contribs:1, href:'#'},
+  {code:'ބ',  name:'Thulaadhoo',  atoll:'Baa',          contribs:0, href:'#'},
+  {code:'ލ',  name:'Gan',         atoll:'Laamu',        contribs:0, href:'#'},
+  {code:'ތ',  name:'Veymandoo',   atoll:'Thaa',         contribs:0, href:'#'},
+  {code:'ގދ', name:'Gadhdhoo',    atoll:'Gaafu Dhaalu', contribs:0, href:'#'},
+  {code:'ފ',  name:'Nilandhoo',   atoll:'Faafu',        contribs:0, href:'#'},
 ];
 
 function render(list){
