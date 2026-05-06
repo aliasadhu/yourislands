@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Islands to Document — Local Living</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+:root{--mid:#555;--soft:#999;--line:#E8E8E8;--surface:#F5F5F5}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--line);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.back{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--soft);text-decoration:none}
+
+/* HERO */
+.hero{padding:36px 20px 32px;border-bottom:1px solid var(--line);overflow:hidden;position:relative}
+.hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(48px,13vw,88px);font-weight:800;letter-spacing:-0.04em;text-transform:uppercase;line-height:0.88;margin-bottom:12px}
+.hero-sub{font-size:12px;color:var(--soft);letter-spacing:0.1em;text-transform:uppercase;font-weight:600}
+
+/* SEARCH */
+.search-wrap{padding:14px 20px;border-bottom:1px solid var(--line);position:sticky;top:56px;background:#fff;z-index:100}
+.search-bar{display:flex;align-items:center;gap:10px;border:1.5px solid #000;padding:12px 16px}
+.search-bar input{flex:1;background:transparent;border:none;outline:none;font-size:16px;color:#000;font-family:'Instrument Sans',sans-serif;-webkit-appearance:none}
+.search-bar input::placeholder{color:var(--soft)}
+
+/* ATOLL CARDS */
+.atolls{display:flex;flex-direction:column}
+.atoll-card{border-bottom:1px solid var(--line)}
+.atoll-card.hidden{display:none}
+
+.atoll-btn{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;min-height:100px;
+  background:transparent;border:none;cursor:pointer;
+  text-align:left;-webkit-tap-highlight-color:transparent;
+  position:relative;overflow:hidden;gap:12px;
+}
+.atoll-btn:active{background:var(--surface)}
+
+.atoll-bg-code{
+  position:absolute;right:-8px;top:50%;transform:translateY(-50%);
+  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+  font-size:clamp(90px,24vw,160px);color:#000;opacity:0.055;
+  line-height:1;direction:rtl;pointer-events:none;
+  letter-spacing:-0.04em;white-space:nowrap;
+}
+
+.atoll-btn-content{display:flex;align-items:center;gap:14px;position:relative;z-index:1;flex:1;min-width:0}
+.atoll-num{font-family:'Bricolage Grotesque',sans-serif;font-size:11px;font-weight:800;color:var(--soft);letter-spacing:0.1em;flex-shrink:0;width:24px}
+.atoll-text{display:flex;flex-direction:column;gap:4px;min-width:0}
+.atoll-name{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(22px,5.5vw,28px);font-weight:800;letter-spacing:-0.03em;color:#000;line-height:1}
+.atoll-en{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--soft)}
+
+.atoll-plus{
+  font-size:28px;font-weight:200;color:#000;flex-shrink:0;
+  position:relative;z-index:1;
+  transition:transform 0.25s ease;line-height:1;
+}
+.atoll-card.open .atoll-plus{transform:rotate(45deg)}
+
+/* DRAWER */
+.atoll-drawer{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
+.atoll-card.open .atoll-drawer{max-height:800px}
+.atoll-drawer-inner{border-top:1px solid var(--line)}
+
+.isl-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px 14px 58px;
+  text-decoration:none;color:inherit;
+  border-bottom:1px solid var(--line);
+  -webkit-tap-highlight-color:transparent;
+}
+.isl-row:last-child{border-bottom:none}
+.isl-row:active{background:var(--surface)}
+.isl-name{font-size:15px;color:#000;font-weight:500}
+.isl-pill{font-size:10px;font-weight:700;letter-spacing:0.06em;color:#000;background:var(--surface);border:1px solid var(--line);padding:3px 9px}
+.isl-arrow{font-size:18px;color:var(--soft)}
+
+/* FOOTER */
+.footer{padding:32px 20px 56px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.footer-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase}
+.footer-tag{font-size:11px;color:var(--soft)}
+.empty{padding:48px 20px;text-align:center;color:var(--soft);font-size:13px;display:none}
+
+@media(min-width:640px){
+  .header{padding:0 32px}
+  .hero{padding:52px 40px 40px}
+  .search-wrap{padding:18px 40px}
+  .atoll-btn{padding:0 40px;min-height:120px}
+  .isl-row{padding:15px 40px 15px 78px}
+  .footer{padding:36px 40px 56px}
+}
+@media(min-width:1024px){
+  .header{padding:0 56px}
+  .hero{padding:72px 56px 56px}
+  .hero-title{font-size:100px}
+  .search-wrap{padding:22px 56px}
+  .atoll-btn{padding:0 56px}
+  .isl-row{padding:16px 56px 16px 94px}
+  .footer{padding:40px 56px 64px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a class="back" href="community.html">← Community</a>
+  
+</header>
+
+<div class="hero">
+  <h1 class="hero-title">Islands<br/>to Visit</h1>
+  <p class="hero-sub">Selected for cultural documentation</p>
+</div>
+
+<div class="search-wrap">
+  <div class="search-bar">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <input type="search" id="search" placeholder="Search islands or atolls…" autocomplete="off" autocorrect="off" spellcheck="false"/>
+  </div>
+</div>
+
+<div class="atolls" id="atolls"><div class="atoll-card" data-atoll="haa alifu" data-islands="utheemu,dhidhdhoo,kelaa,baarah,filladhoo,muraidhoo,ihavandhoo,berinmadhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ހ.އ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">01</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Haa Alifu</span>
+        <span class="atoll-en">North Thiladhunmathi · 8 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="utheemu.html"><span class="isl-name">Utheemu</span><span class="isl-pill">+4 stories</span></a><a class="isl-row" href="#"><span class="isl-name">Dhidhdhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kelaa</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Baarah</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Filladhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Muraidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Ihavandhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Berinmadhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="haa dhaalu" data-islands="kulhudhuffushi,nolhivaram,vaikaradhoo,nolhivaranfaru,makunudhoo,finey">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ހ.ދ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">02</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Haa Dhaalu</span>
+        <span class="atoll-en">South Thiladhunmathi · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Kulhudhuffushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Nolhivaram</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Vaikaradhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Nolhivaranfaru</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Makunudhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Finey</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="shaviyani" data-islands="funadhoo,kanditheemu,feevah,narudhoo,goidhoo,maroshi">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ށ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">03</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Shaviyani</span>
+        <span class="atoll-en">North Miladhunmadulu · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Funadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kanditheemu</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Feevah</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Narudhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Goidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Maroshi</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="noonu" data-islands="ungoofaaru,velidhoo,manadhoo,holhudhdhoo,kudafari,maafaru">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ނ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">04</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Noonu</span>
+        <span class="atoll-en">South Miladhunmadulu · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Ungoofaaru</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Velidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Manadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Holhudhdhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kudafari</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Maafaru</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="raa" data-islands="ugoofaaru,alifushi,meedhoo,rasgetheemu,kinolhas,hulhudhuffaaru,inguraidhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ރ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">05</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Raa</span>
+        <span class="atoll-en">North Maalhosmadulu · 7 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Ugoofaaru</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Alifushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Meedhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Rasgetheemu</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kinolhas</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Hulhudhuffaaru</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Inguraidhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="baa" data-islands="eydhafushi,thulhaadhoo,dharavandhoo,maalhos,fehendhoo,goidhoo,kendhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ބ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">06</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Baa</span>
+        <span class="atoll-en">South Maalhosmadulu · 7 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Eydhafushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Thulhaadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Dharavandhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Maalhos</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Fehendhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Goidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kendhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="lhaviyani" data-islands="naifaru,hinnavaru,olhuvelifushi,felivaru,kurendhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ޅ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">07</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Lhaviyani</span>
+        <span class="atoll-en">Faadhippolhu · 5 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Naifaru</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Hinnavaru</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Olhuvelifushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Felivaru</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kurendhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="kaafu" data-islands="malé,thulusdhoo,himmafushi,maafushi,gulhi,kaashidhoo,guraidhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ކ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">08</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Kaafu</span>
+        <span class="atoll-en">Malé Atoll · 7 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Malé</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Thulusdhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Himmafushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Maafushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Gulhi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kaashidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Guraidhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="alifu alifu" data-islands="rasdhoo,thoddoo,feridhoo,mathiveri,himandhoo,bodufolhudhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">އ.އ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">09</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Alifu Alifu</span>
+        <span class="atoll-en">North Ari · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Rasdhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Thoddoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Feridhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Mathiveri</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Himandhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Bodufolhudhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="alifu dhaalu" data-islands="mahibadhoo,dhigurah,maamigili,mandhoo,dhangethi,omadhoo,hangnameedhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">އ.ދ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">10</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Alifu Dhaalu</span>
+        <span class="atoll-en">South Ari · 7 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Mahibadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Dhigurah</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Maamigili</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Mandhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Dhangethi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Omadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Hangnameedhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="vaavu" data-islands="felidhoo,thinadhoo,keyodhoo,rakeedhoo,fulidhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ވ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">11</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Vaavu</span>
+        <span class="atoll-en">Felidhoo · 5 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Felidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Thinadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Keyodhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Rakeedhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Fulidhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="meemu" data-islands="muli,maduvvari,raimandhoo,dhiggaru,kolhufushi">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">މ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">12</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Meemu</span>
+        <span class="atoll-en">Mulaku · 5 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Muli</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Maduvvari</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Raimandhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Dhiggaru</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kolhufushi</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="faafu" data-islands="nilandhoo,biledhdhoo,magoodhoo,dharanboodhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ފ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">13</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Faafu</span>
+        <span class="atoll-en">North Nilandhe · 4 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Nilandhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Biledhdhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Magoodhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Dharanboodhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="dhaalu" data-islands="kudahuvadhoo,rinbudhoo,meedhoo,hulhudheli,bandidhoo,vaaney">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ދ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">14</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Dhaalu</span>
+        <span class="atoll-en">South Nilandhe · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Kudahuvadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Rinbudhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Meedhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Hulhudheli</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Bandidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Vaaney</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="thaa" data-islands="veymandoo,kinbidhoo,gaadhiffushi,vilufushi,thimarafushi,buruni">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ތ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">15</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Thaa</span>
+        <span class="atoll-en">Kolhumadulu · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Veymandoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kinbidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Gaadhiffushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Vilufushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Thimarafushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Buruni</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="laamu" data-islands="fonadhoo,gan,isdhoo,maabaidhoo,mundoo,hithadhoo,dhanbidhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ލ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">16</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Laamu</span>
+        <span class="atoll-en">Hadhdhunmathi · 7 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Fonadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Gan</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Isdhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Maabaidhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Mundoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Hithadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Dhanbidhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="gaafu alifu" data-islands="viligili,nilandhoo,gemanafushi,kondey,dhaandhoo,kolamaafushi">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ގ.އ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">17</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Gaafu Alifu</span>
+        <span class="atoll-en">North Huvadhu · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Viligili</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Nilandhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Gemanafushi</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kondey</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Dhaandhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Kolamaafushi</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="gaafu dhaalu" data-islands="thinadhoo,gadhdhoo,fares-maathodaa,vaadhoo,nadellaa,hoadedhdhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ގ.ދ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">18</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Gaafu Dhaalu</span>
+        <span class="atoll-en">South Huvadhu · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Thinadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Gadhdhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Fares-Maathodaa</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Vaadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Nadellaa</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Hoadedhdhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="gnaviyani" data-islands="fuvahmulah">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ޏ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">19</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Gnaviyani</span>
+        <span class="atoll-en">Fuvahmulah · 1 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Fuvahmulah</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div><div class="atoll-card" data-atoll="seenu" data-islands="hithadhoo,gan,feydhoo,maradhoofeydhoo,hulhumeedhoo,meedhoo">
+  <button class="atoll-btn" onclick="toggle(this)">
+    <div class="atoll-bg-code">ސ</div>
+    <div class="atoll-btn-content">
+      <span class="atoll-num">20</span>
+      <div class="atoll-text">
+        <span class="atoll-name">Seenu</span>
+        <span class="atoll-en">Addu · 6 islands</span>
+      </div>
+    </div>
+    <span class="atoll-plus">+</span>
+  </button>
+  <div class="atoll-drawer">
+    <div class="atoll-drawer-inner"><a class="isl-row" href="#"><span class="isl-name">Hithadhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Gan</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Feydhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Maradhoofeydhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Hulhumeedhoo</span><span class="isl-arrow">›</span></a><a class="isl-row" href="#"><span class="isl-name">Meedhoo</span><span class="isl-arrow">›</span></a></div>
+  </div>
+</div></div>
+<div class="empty" id="empty">No islands found</div>
+
+<footer class="footer">
+  <div>
+    <div class="footer-logo">Local Living</div>
+    <div class="footer-tag">Preserving Maldivian Culture &amp; Stories</div>
+  </div>
+  <div style="font-size:11px;color:var(--soft)">v.2026.06</div>
+</footer>
+
+<script>
+function toggle(btn){
+  btn.closest('.atoll-card').classList.toggle('open');
+}
+document.getElementById('search').addEventListener('input',function(){
+  var q=this.value.trim().toLowerCase();
+  var any=false;
+  document.querySelectorAll('.atoll-card').forEach(function(c){
+    var m=!q||c.dataset.atoll.includes(q)||c.dataset.islands.includes(q);
+    c.classList.toggle('hidden',!m);
+    if(m){any=true;if(q)c.classList.add('open');else c.classList.remove('open');}
+  });
+  document.getElementById('empty').style.display=any?'none':'block';
+});
+</script>
+</body>
+</html>
