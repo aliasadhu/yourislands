@@ -3,117 +3,142 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Local Living — Design Mockup</title>
+<title>Local Living — Maldives</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#050505;font-family:'Instrument Sans',sans-serif;color:#F5F5F2;-webkit-font-smoothing:antialiased}
+html,body{background:#050505;font-family:'Instrument Sans',sans-serif;color:#F5F5F2;-webkit-font-smoothing:antialiased}
 :root{--w:#F5F5F2;--dim:rgba(245,245,242,0.45);--faint:rgba(245,245,242,0.18);--line:rgba(245,245,242,0.08)}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
 @keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-.page{height:100vh;display:flex;flex-direction:column;overflow:hidden}
-
-/* Header */
-.header{background:#050505;border-bottom:1px solid var(--line);padding:0 32px;height:48px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.header-left{display:flex;align-items:center;gap:24px}
-.logo-text{font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--w)}
-.header-tag{font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim)}
-.header-right{display:flex;align-items:center;gap:24px}
+/* ── MOBILE BASE ── */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:#050505;border-bottom:1px solid var(--line);
+  padding:0 20px;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo-text{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--w)}
+.header-right{display:flex;align-items:center;gap:16px}
 .header-clock{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
 .header-count{font-size:11px;color:var(--dim);font-weight:500}
 
-/* Body */
-.body{flex:1;display:grid;grid-template-columns:minmax(340px,1fr) minmax(640px,1.6fr);min-height:0;overflow:hidden}
-
-/* Left rail */
-.aside{padding:56px 48px 40px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;overflow-y:auto}
-.badge{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);margin-bottom:40px}
+/* Hero */
+.hero{padding:32px 20px 28px;border-bottom:1px solid var(--line)}
+.badge{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);margin-bottom:24px}
 .badge-dot{width:6px;height:6px;border-radius:50%;background:#9BC4A0;box-shadow:0 0 10px #9BC4A0;animation:drift 4s ease-in-out infinite;flex-shrink:0}
-.eyebrow{font-family:'Bricolage Grotesque',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-bottom:18px}
-.h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(46px,4.6vw,72px);font-weight:800;line-height:0.95;letter-spacing:-0.025em;color:var(--w);text-transform:uppercase;margin-bottom:28px}
+.eyebrow{font-family:'Bricolage Grotesque',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.h1{font-family:'Bricolage Grotesque',sans-serif;font-size:36px;font-weight:800;line-height:0.95;letter-spacing:-0.025em;color:var(--w);text-transform:uppercase;margin-bottom:18px}
 .h1 .muted{color:var(--dim)}
-.lede{font-size:15px;line-height:1.75;color:var(--dim);max-width:440px;margin-bottom:32px}
+.lede{font-size:14px;line-height:1.7;color:var(--dim);margin-bottom:24px}
 
-/* Kinbidhoo card */
-.example-card{display:block;width:100%;text-align:left;background:rgba(245,245,242,0.025);border:1px solid var(--line);padding:18px 20px;cursor:pointer;color:inherit;transition:border-color .18s,background .18s;margin-bottom:12px}
-.example-card:hover{border-color:rgba(245,245,242,0.25);background:rgba(245,245,242,0.04)}
-.card-label{font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
-.card-title-row{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
-.card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.02em;color:var(--w)}
-.card-atoll{font-size:10px;color:var(--faint);letter-spacing:0.16em;text-transform:uppercase}
-.card-body{font-size:13px;line-height:1.6;color:var(--dim);margin-bottom:10px}
-.card-cta{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--w)}
+/* Example card */
+.example-card{width:100%;text-align:left;background:rgba(245,245,242,0.025);border:1px solid var(--line);padding:16px 18px;cursor:pointer;color:inherit;display:block;-webkit-tap-highlight-color:transparent;margin-bottom:0}
+.example-card:active{background:rgba(245,245,242,0.05)}
+.card-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+.card-title-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--w)}
+.card-atoll{font-size:10px;color:var(--faint);letter-spacing:0.14em;text-transform:uppercase}
+.card-body{font-size:13px;line-height:1.55;color:var(--dim);margin-bottom:10px}
+.card-cta{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--w)}
 
-/* Stats */
-.stats{margin-top:32px;padding-top:28px;border-top:1px solid var(--line);display:flex;gap:40px}
-.stat-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
-.stat-val{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:var(--w)}
+/* Stats row */
+.stats{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:24px}
+.stat{padding:18px 20px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:none}
+.stat-label{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.stat-val{font-family:'Bricolage Grotesque',sans-serif;font-size:30px;font-weight:800;color:var(--w);line-height:1}
 
-/* Main */
-.main{overflow-y:auto;overflow-x:hidden;padding:48px 56px 80px;min-width:0}
-.section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:24px}
+/* Index section */
+.index{padding:0 20px}
+.section-head{display:flex;justify-content:space-between;align-items:center;padding:20px 0 0}
 .section-title{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim)}
 .section-meta{font-size:11px;color:var(--faint)}
 
 /* Search */
-.search-bar{display:flex;align-items:center;gap:14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 4px;margin-bottom:8px}
-.search-bar input{flex:1;background:transparent;border:none;outline:none;font-size:14px;color:var(--w);letter-spacing:-.005em;font-family:'Instrument Sans',sans-serif}
+.search-bar{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:0}
+.search-bar input{flex:1;background:transparent;border:none;outline:none;font-size:16px;color:var(--w);font-family:'Instrument Sans',sans-serif;min-width:0;-webkit-appearance:none}
 .search-bar input::placeholder{color:var(--faint)}
-.search-count{font-size:10px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.search-count{font-size:10px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
 
 /* Atoll accordion */
-.atoll-block{border-top:1px solid var(--line)}
+.atoll-block{border-bottom:1px solid var(--line)}
 .atoll-trigger{
   width:100%;background:transparent;border:none;color:inherit;
-  padding:28px 4px;cursor:pointer;
-  display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:24px;
-  text-align:left;
+  padding:18px 0;cursor:pointer;
+  display:flex;align-items:center;gap:14px;
+  text-align:left;-webkit-tap-highlight-color:transparent;
 }
-.atoll-trigger:hover .atoll-name{color:var(--w)}
-.atoll-left{display:flex;flex-direction:column;gap:6px}
-.atoll-num{font-size:10px;font-weight:700;letter-spacing:0.22em;color:var(--faint)}
-.atoll-code{font-family:'Bricolage Grotesque',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim)}
-.atoll-center{display:flex;flex-direction:column;gap:6px}
-.atoll-name{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;line-height:1;letter-spacing:-0.03em;color:rgba(245,245,242,0.85);transition:color .18s}
-.atoll-eng{font-size:12px;color:var(--faint);font-style:italic}
-.atoll-right{display:flex;align-items:center;gap:16px}
-.atoll-count{font-size:11px;color:var(--faint)}
-.atoll-chevron{font-size:14px;color:var(--faint);transition:transform .25s;display:inline-block}
+.atoll-num{font-size:10px;font-weight:700;letter-spacing:0.16em;color:var(--faint);flex-shrink:0;width:40px}
+.atoll-body{flex:1;min-width:0}
+.atoll-name{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;line-height:1;letter-spacing:-0.025em;color:rgba(245,245,242,0.88);display:block}
+.atoll-sub{font-size:11px;color:var(--faint);margin-top:3px;display:block}
+.atoll-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.atoll-count{font-size:10px;color:var(--faint)}
+.atoll-chevron{font-size:20px;color:var(--faint);transition:transform .25s;line-height:1;display:inline-block}
 .atoll-block.open .atoll-chevron{transform:rotate(90deg)}
 
 /* Island list */
-.island-list{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(0.4,0,0.2,1)}
-.atoll-block.open .island-list{max-height:2000px}
-.island-list-inner{padding:0 4px 28px 72px;display:flex;flex-direction:column}
+.island-list{overflow:hidden;max-height:0;transition:max-height .4s cubic-bezier(0.4,0,0.2,1)}
+.atoll-block.open .island-list{max-height:3000px}
+.island-list-inner{padding:0 0 16px 54px}
 .island-row{
   width:100%;background:transparent;border:none;
   border-bottom:1px solid var(--line);
-  padding:13px 4px;
-  display:grid;grid-template-columns:34px 1fr 22px;align-items:baseline;gap:18px;
+  padding:15px 0;
+  display:flex;align-items:center;gap:14px;
   text-align:left;cursor:pointer;color:inherit;
+  -webkit-tap-highlight-color:transparent;
+  min-height:52px;
 }
 .island-row:last-child{border-bottom:none}
-.island-row:hover .island-name{color:var(--w);transform:translateX(6px)}
-.island-row:hover .island-arrow{color:var(--w);transform:translateX(3px)}
-.island-num{font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums;letter-spacing:.1em;transition:color .18s}
-.island-name{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:600;letter-spacing:-.02em;color:rgba(245,245,242,0.78);transform:translateX(0);transition:transform .22s,color .18s}
-.island-arrow{font-size:14px;text-align:right;color:var(--faint);transform:translateX(0);transition:transform .22s,color .18s}
+.island-row:active .island-name{color:var(--w)}
+.island-num{font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums;letter-spacing:.1em;flex-shrink:0;width:22px}
+.island-name{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:600;letter-spacing:-.02em;color:rgba(245,245,242,0.8);flex:1}
+.island-arrow{font-size:14px;color:var(--faint);flex-shrink:0}
 
 /* Footer */
-.footer{margin-top:56px;padding:24px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:var(--faint)}
-.end-rule{border-top:1px solid var(--line)}
+.footer{padding:28px 20px 48px;border-top:1px solid var(--line);margin-top:8px;font-size:11px;color:var(--faint);display:flex;flex-direction:column;gap:4px}
 
-@media(max-width:860px){
-  html,body{overflow:auto}
-  .body{grid-template-columns:1fr;overflow:visible}
-  .aside{padding:32px 20px 24px;border-right:none;border-bottom:1px solid var(--line)}
-  .main{padding:32px 20px 64px;overflow:visible}
-  .h1{font-size:44px}
-  .island-list-inner{padding-left:24px}
+/* ── TABLET 640px+ ── */
+@media(min-width:640px){
+  .header{padding:0 32px}
+  .hero{padding:44px 40px 36px}
+  .h1{font-size:52px}
+  .lede{font-size:15px}
+  .stats{margin-top:32px}
+  .stat{padding:22px 32px}
+  .stat-val{font-size:38px}
+  .index{padding:0 40px}
+  .island-list-inner{padding-left:68px}
+  .atoll-name{font-size:26px}
+  .island-name{font-size:20px}
+  .footer{flex-direction:row;justify-content:space-between;padding:28px 40px 48px}
+}
+
+/* ── DESKTOP 1024px+ ── */
+@media(min-width:1024px){
+  html,body{height:100%;overflow:hidden}
+  .page{height:100vh;display:flex;flex-direction:column}
+  .header{padding:0 40px;height:48px}
+  .header-tag{display:inline;font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim)}
+  .body{flex:1;display:grid;grid-template-columns:minmax(360px,1fr) minmax(600px,1.6fr);min-height:0;overflow:hidden}
+  .hero{padding:56px 56px 40px;border-bottom:none;border-right:1px solid var(--line);overflow-y:auto;display:flex;flex-direction:column;justify-content:space-between}
+  .h1{font-size:clamp(46px,4vw,68px)}
+  .lede{font-size:15px;max-width:420px}
+  .stats{grid-template-columns:auto auto;gap:0;margin-top:auto;padding-top:28px;border-top:1px solid var(--line);border-bottom:none;display:flex}
+  .stat{padding:0 32px 0 0;border-right:none}
+  .stat+.stat{padding-left:32px;border-left:1px solid var(--line)}
+  .stat-val{font-size:28px}
+  .index-wrap{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column}
+  .index{padding:40px 56px 0;flex:1}
+  .section-head{padding-top:0}
+  .atoll-name{font-size:26px}
+  .island-name{font-size:20px}
+  .island-row:hover .island-name{color:var(--w)}
+  .island-row:hover .island-arrow{color:var(--w)}
+  .footer{padding:24px 56px 32px}
 }
 </style>
 </head>
@@ -121,55 +146,56 @@ html,body{height:100%;background:#050505;font-family:'Instrument Sans',sans-seri
 <div class="page">
 
   <header class="header">
-    <div class="header-left">
-      <span class="logo-text">Local Living</span>
-      <span class="header-tag">Preserving Maldivian Identity</span>
-    </div>
+    <span class="logo-text">Local Living</span>
     <div class="header-right">
       <span class="header-clock" id="clock"></span>
-      <span class="header-count">20 Atolls · 87 Islands</span>
+      <span class="header-count">20 · 87</span>
     </div>
   </header>
 
   <div class="body">
 
-    <aside class="aside">
+    <section class="hero">
       <div>
         <div class="badge"><span class="badge-dot"></span>Field Research · 2026</div>
         <div class="eyebrow">Preserving Maldivian Culture &amp; Stories</div>
-        <h1 class="h1">Preserving<br/>Maldivian Culture<br/><span class="muted">&amp; Stories</span></h1>
-        <p class="lede">Twenty atolls, 87 islands. A field-research itinerary documenting the rituals, crafts, languages and characters that make Maldivian culture what it is — from Haa Alifu in the north to Seenu in the south.</p>
+        <h1 class="h1">Preserving<br/>Maldivian<br/>Culture<br/><span class="muted">&amp; Stories</span></h1>
+        <p class="lede">Twenty atolls, 87 islands. Documenting the rituals, crafts, languages and characters that make Maldivian culture what it is.</p>
         <div class="example-card">
           <div class="card-label">Example · What a story looks like</div>
           <div class="card-title-row">
             <span class="card-title">Kinbidhoo</span>
             <span class="card-atoll">Th. Atoll</span>
           </div>
-          <p class="card-body">Beyya, Bodu Kun'bus, Bodumas &amp; Ilibo, Koadi — four published stories from a single island. The kind of cultural detail we're documenting everywhere we go.</p>
+          <p class="card-body">Beyya, Bodu Kun'bus, Bodumas &amp; Ilibo, Koadi — four published stories from one island.</p>
           <span class="card-cta">Read the example →</span>
         </div>
       </div>
       <div class="stats">
-        <div><div class="stat-label">Atolls</div><div class="stat-val">20</div></div>
-        <div><div class="stat-label">Islands</div><div class="stat-val">87</div></div>
+        <div class="stat"><div class="stat-label">Atolls</div><div class="stat-val">20</div></div>
+        <div class="stat"><div class="stat-label">Islands</div><div class="stat-val">87</div></div>
       </div>
-    </aside>
+    </section>
 
-    <main class="main">
-      <div class="section-head">
-        <span class="section-title">Index of Atolls</span>
-        <span class="section-meta" id="meta">North → South · 20/20</span>
+    <div class="index-wrap">
+      <div class="index">
+        <div class="section-head">
+          <span class="section-title">Index of Atolls</span>
+          <span class="section-meta" id="meta">20 / 20</span>
+        </div>
+        <div class="search-bar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(245,245,242,0.3)" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="search" id="search" placeholder="Search atolls or islands…" autocomplete="off" autocorrect="off" spellcheck="false"/>
+          <span class="search-count" id="count">87 islands</span>
+        </div>
+        <div id="atoll-list"></div>
       </div>
-      <div class="search-bar">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(245,245,242,0.45)" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-        <input type="text" id="search" placeholder="Search atolls or islands — e.g. Fuvahmulah, Baa, Kinbidhoo"/>
-        <span class="search-count" id="count">87 islands</span>
+      <div class="footer">
+        <span>A field-research project by Local Living</span>
+        <span>v.2026.06</span>
       </div>
+    </div>
 
-      <div id="atoll-list"></div>
-      <div class="end-rule"></div>
-      <div class="footer"><span>A field-research project by Local Living</span><span>v.2026.06</span></div>
-    </main>
   </div>
 </div>
 
