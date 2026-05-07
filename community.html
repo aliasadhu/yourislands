@@ -791,12 +791,14 @@ function updateAuthUI(session) {
 
 // Handle auth redirect (magic link / OAuth callback)
 db.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_IN' && session) {
+  if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
     closeSignIn();
     updateAuthUI(session);
-    // Show welcome toast after Google/email sign-in redirect
-    const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'you';
-    showWelcome(name);
+    if (sessionStorage.getItem('showWelcome')) {
+      sessionStorage.removeItem('showWelcome');
+      const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'you';
+      showWelcome(name);
+    }
   }
 });
 
@@ -813,6 +815,7 @@ function openSignIn(){ document.getElementById('signin-modal').classList.add('op
 function closeSignIn(){ document.getElementById('signin-modal').classList.remove('open'); document.body.style.overflow=''; }
 
 async function signInWithGoogle() {
+  sessionStorage.setItem('showWelcome', '1');
   await db.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo: window.location.href }
