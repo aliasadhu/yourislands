@@ -777,7 +777,7 @@ function renderWelcomeIslands(q) {
     return i.name.toLowerCase().includes(q) || i.atoll.toLowerCase().includes(q);
   }) : _welcomeIslands;
   list.innerHTML = filtered.slice(0, 40).map(function(i){
-    return '<div class="welcome-island-row" onclick="goToIsland('' + i.href + '')">' +
+    return '<div class="welcome-island-row" onclick="goToIsland(\'' + i.href + '\')">' +
       '<div><div class="welcome-island-name">' + i.name + '</div>' +
       '<div class="welcome-island-atoll">' + i.atoll + '</div></div>' +
       '<span class="welcome-island-arrow">›</span></div>';
