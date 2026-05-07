@@ -171,7 +171,7 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
   <div class="contrib-gate" id="gate">
     <div class="gate-count" id="gate-avatars"></div>
     <div class="gate-text" id="gate-text"></div>
-    <p class="gate-sub">Sign in to read what locals have contributed — and to add your own.</p>
+    <p class="gate-sub">Sign in to read the rest — and to add your own.</p>
     <button class="gate-btn" onclick="openSignIn()">Sign in to read →</button>
   </div>
   <div class="contrib-list" id="contrib-list" style="display:none"></div>
@@ -283,7 +283,7 @@ db.auth.onAuthStateChange(async (event, session) => {
   currentUser = session?.user || null;
   if (event === 'SIGNED_IN' && currentIsland) {
     closeSignIn();
-    await loadContributions(currentIsland.id);
+    await loadContributions(currentIsland.id, currentUser);
   }
 });
 
@@ -343,36 +343,50 @@ async function loadIsland() {
     return;
   }
 
-  if (currentUser) {
-    await loadContributions(key);
-  } else {
-    const { data: sample } = await db.from('contributions').select('author').eq('island_id', key).limit(3);
+  await loadContributions(key, currentUser);
+}
+
+async function loadContributions(islandId, user) {
+  const { data: contribs } = await db.from('contributions')
+    .select('*').eq('island_id', islandId).order('likes', { ascending: false });
+  if (!contribs || contribs.length === 0) { document.getElementById('gate').style.display = 'none'; return; }
+
+  const list = document.getElementById('contrib-list');
+  list.style.display = 'flex';
+  list.innerHTML = '';
+
+  // Always show top contribution
+  const top = contribs[0];
+  const topTime = new Date(top.created_at).toLocaleDateString('en', { month:'short', day:'numeric' });
+  const topEl = document.createElement('div');
+  topEl.className = 'contrib';
+  topEl.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${top.author||'Anonymous'}</span>${top.role ? `<span class="contrib-role"> · ${top.role}</span>` : ''}</div><span class="contrib-type">${typeLabels[top.type]||''}</span></div><p class="contrib-body">${top.body}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${top.id}',${top.likes||0})">♡ <span>${top.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${topTime}</span></div>`;
+  list.appendChild(topEl);
+
+  if (!user && contribs.length > 1) {
+    // Show gate after top contribution
+    const remaining = contribs.length - 1;
     const avatarsEl = document.getElementById('gate-avatars');
-    (sample || []).forEach(c => {
+    avatarsEl.innerHTML = '';
+    contribs.slice(1, 4).forEach(c => {
       const div = document.createElement('div');
       div.className = 'gate-avatar';
       div.textContent = (c.author || '?')[0].toUpperCase();
       avatarsEl.appendChild(div);
     });
-    document.getElementById('gate-text').textContent = total + ' people have shared suggestions for ' + island.name;
+    document.getElementById('gate-text').textContent = remaining + ' more suggestion' + (remaining !== 1 ? 's' : '') + ' from locals';
     document.getElementById('gate').style.display = 'block';
+  } else {
+    document.getElementById('gate').style.display = 'none';
+    // Show remaining contributions
+    contribs.slice(1).forEach(c => {
+      const time = new Date(c.created_at).toLocaleDateString('en', { month:'short', day:'numeric' });
+      const el = document.createElement('div');
+      el.className = 'contrib';
+      el.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${c.author||'Anonymous'}</span>${c.role ? `<span class="contrib-role"> · ${c.role}</span>` : ''}</div><span class="contrib-type">${typeLabels[c.type]||''}</span></div><p class="contrib-body">${c.body}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${c.id}',${c.likes||0})">♡ <span>${c.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${time}</span></div>`;
+      list.appendChild(el);
+    });
   }
-}
-
-async function loadContributions(islandId) {
-  const { data: contribs } = await db.from('contributions')
-    .select('*').eq('island_id', islandId).order('created_at', { ascending: false });
-  document.getElementById('gate').style.display = 'none';
-  const list = document.getElementById('contrib-list');
-  list.style.display = 'flex';
-  list.innerHTML = '';
-  (contribs || []).forEach(c => {
-    const time = new Date(c.created_at).toLocaleDateString('en', { month:'short', day:'numeric' });
-    const el = document.createElement('div');
-    el.className = 'contrib';
-    el.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${c.author||'Anonymous'}</span>${c.role ? `<span class="contrib-role"> · ${c.role}</span>` : ''}</div><span class="contrib-type">${typeLabels[c.type]||''}</span></div><p class="contrib-body">${c.body}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${c.id}',${c.likes||0})">♡ <span>${c.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${time}</span></div>`;
-    list.appendChild(el);
-  });
 }
 
 // ── Sign-in ───────────────────────────────────────────────────────────────────
@@ -435,7 +449,7 @@ async function submitContrib(){
   });
   if(error){ alert('Something went wrong. Please try again.'); return; }
   closeContrib();
-  await loadContributions(currentIsland.id);
+  await loadContributions(currentIsland.id, currentUser);
 }
 
 async function likeContrib(btn, id, current){
