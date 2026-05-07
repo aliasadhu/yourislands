@@ -736,22 +736,38 @@ function showToast(msg) {
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
+function typeWriter(el, text, speed, done) {
+  el.textContent = '';
+  el.style.opacity = '1';
+  el.style.transform = 'translateY(0)';
+  var i = 0;
+  function tick() {
+    if (i < text.length) {
+      el.textContent += text[i++];
+      setTimeout(tick, speed);
+    } else if (done) {
+      done();
+    }
+  }
+  tick();
+}
+
 function showWelcome(name) {
   var screen = document.getElementById('welcome-screen');
   var line1 = document.getElementById('welcome-line1');
   var line2 = document.getElementById('welcome-line2');
   var cta = document.getElementById('welcome-cta');
   screen.classList.add('active');
-  // Animate lines in sequence
   setTimeout(function(){
     line1.style.opacity = '1'; line1.style.transform = 'translateY(0)';
   }, 200);
   setTimeout(function(){
-    line2.style.opacity = '1'; line2.style.transform = 'translateY(0)';
-  }, 800);
-  setTimeout(function(){
-    cta.style.opacity = '1'; cta.style.transform = 'translateY(0)';
-  }, 1800);
+    typeWriter(line2, "It's time to preserve your island's story.", 38, function(){
+      setTimeout(function(){
+        cta.style.opacity = '1'; cta.style.transform = 'translateY(0)';
+      }, 300);
+    });
+  }, 900);
 }
 
 function dismissWelcome() {
@@ -859,7 +875,7 @@ async function signInWithEmail() {
 <div class="welcome-screen" id="welcome-screen" onclick="dismissWelcome()">
   <div style="text-align:center;width:100%">
     <div class="welcome-line welcome-name" id="welcome-line1">Welcome.</div>
-    <div class="welcome-line welcome-tagline" id="welcome-line2">It's time to preserve<br>your island's story.</div>
+    <div class="welcome-line welcome-tagline" id="welcome-line2"></div>
     <button class="welcome-cta" id="welcome-cta" onclick="dismissWelcome()">Start sharing →</button>
   </div>
 </div>
