@@ -504,13 +504,13 @@ function openSignIn(){ document.getElementById('signin-modal').classList.add('op
 function closeSignIn(){ document.getElementById('signin-modal').classList.remove('open'); document.body.style.overflow=''; }
 
 async function signInWithGoogle(){
-  await db.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: 'https://aliasadhu.github.io/local-living-mockup/island.html' } });
+  await db.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: 'https://aliasadhu.github.io/yourislands/island.html' } });
 }
 
 async function signInWithEmail(){
   const email = document.querySelector('#signin-modal input[type=email]').value.trim();
   if(!email || !email.includes('@') || !email.includes('.')){ alert('Please enter a valid email address.'); return; }
-  const { error } = await db.auth.signInWithOtp({ email, options:{ emailRedirectTo: 'https://aliasadhu.github.io/local-living-mockup/island.html' } });
+  const { error } = await db.auth.signInWithOtp({ email, options:{ emailRedirectTo: 'https://aliasadhu.github.io/yourislands/island.html' } });
   if(error){ alert(error.message); return; }
   document.querySelector('#signin-modal .modal').innerHTML = '<div class="modal-close"><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999">Sign in</span><button class="modal-close-btn" onclick="closeSignIn()">✕</button></div><div style="padding:40px 0 20px;text-align:center"><div class="modal-title" style="margin-bottom:12px">Check your email</div><p style="font-size:14px;color:var(--mid);line-height:1.6">We sent a magic link to <strong>' + email + '</strong>.<br/>Click it to sign in and read contributions.</p></div>';
 }
@@ -620,7 +620,7 @@ function closeSharePanel() {
 
 function nativeShare() {
   const name = currentIsland?.name || 'this island';
-  const url = 'https://aliasadhu.github.io/local-living-mockup/island.html?name=' + (currentIsland?.id || '');
+  const url = 'https://aliasadhu.github.io/yourislands/island.html?name=' + (currentIsland?.id || '');
   navigator.share({
     title: 'I helped document ' + name + ' on Local Living',
     text: 'I contributed to preserving Maldivian culture. Add your voice from ' + name + '.',
@@ -629,12 +629,12 @@ function nativeShare() {
 }
 
 function shareToFacebook() {
-  const url = 'https://aliasadhu.github.io/local-living-mockup/island.html?name=' + (currentIsland?.id || '');
+  const url = 'https://aliasadhu.github.io/yourislands/island.html?name=' + (currentIsland?.id || '');
   window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank', 'width=600,height=400');
 }
 
 function copyIslandLink() {
-  const url = 'https://aliasadhu.github.io/local-living-mockup/island.html?name=' + (currentIsland?.id || '');
+  const url = 'https://aliasadhu.github.io/yourislands/island.html?name=' + (currentIsland?.id || '');
   navigator.clipboard.writeText(url).then(function(){
     const btn = document.getElementById('copy-btn');
     if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy island link'; }, 2000); }
