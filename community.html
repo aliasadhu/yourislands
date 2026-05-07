@@ -341,13 +341,23 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 .signout-menu.open{display:block}
 .signout-btn{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:none;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif;width:100%;text-align:left;padding:0}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-/* Welcome screen */
-.welcome-screen{position:fixed;inset:0;background:#000;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;pointer-events:none;opacity:0}
+/* Island picker screen */
+.welcome-screen{position:fixed;inset:0;background:#000;z-index:500;display:flex;flex-direction:column;pointer-events:none;opacity:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .welcome-screen.active{pointer-events:all;opacity:1}
+.welcome-header{padding:40px 28px 0;flex-shrink:0}
 .welcome-line{font-family:'Bricolage Grotesque',sans-serif;color:#fff;opacity:0;transform:translateY(16px);transition:opacity 0.7s ease,transform 0.7s ease}
-.welcome-name{font-size:clamp(36px,10vw,64px);font-weight:800;line-height:1.1;margin-bottom:12px}
-.welcome-tagline{font-size:clamp(16px,4.5vw,22px);font-weight:300;color:#999;line-height:1.5;text-align:center;max-width:320px;margin:0 auto}
-.welcome-cta{margin-top:48px;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#fff;opacity:0;transform:translateY(8px);transition:opacity 0.5s ease 1.8s,transform 0.5s ease 1.8s;border-bottom:1px solid #fff;padding-bottom:2px;background:none;border-top:none;border-left:none;border-right:none;cursor:pointer;font-family:'Instrument Sans',sans-serif}
+.welcome-name{font-size:clamp(32px,9vw,56px);font-weight:800;line-height:1.05;margin-bottom:8px}
+.welcome-tagline{font-size:clamp(14px,4vw,18px);font-weight:300;color:#666;line-height:1.5;margin-bottom:28px}
+.welcome-search-wrap{padding:0 28px;opacity:0;transform:translateY(10px);transition:opacity 0.5s ease,transform 0.5s ease;flex-shrink:0}
+.welcome-search{width:100%;background:transparent;border:none;border-bottom:1px solid #333;padding:12px 0;font-size:18px;color:#fff;font-family:'Instrument Sans',sans-serif;outline:none}
+.welcome-search::placeholder{color:#444}
+.welcome-island-list{flex:1;padding:8px 0 60px;opacity:0;transition:opacity 0.4s ease}
+.welcome-island-row{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid #1a1a1a;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.1s}
+.welcome-island-row:active{background:#111}
+.welcome-island-name{font-size:16px;font-weight:600;color:#fff;font-family:'Bricolage Grotesque',sans-serif}
+.welcome-island-atoll{font-size:11px;color:#555;letter-spacing:0.08em;text-transform:uppercase}
+.welcome-island-arrow{font-size:18px;color:#333}
+.welcome-skip{display:block;text-align:center;padding:20px;font-size:11px;color:#444;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;background:none;border:none;font-family:'Instrument Sans',sans-serif;width:100%}
 @keyframes welcomeFadeOut{from{opacity:1}to{opacity:0}}
 .modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:#000;margin-bottom:6px}
 .modal-sub{font-size:13px;color:#555;margin-bottom:24px}
@@ -754,36 +764,60 @@ function typeWriter(el, text, speed, done) {
     if (i < text.length) {
       el.textContent += text[i++];
       setTimeout(tick, speed);
-    } else if (done) {
-      done();
-    }
+    } else if (done) { done(); }
   }
   tick();
 }
 
+var _welcomeIslands = [];
+
+function renderWelcomeIslands(q) {
+  var list = document.getElementById('welcome-island-list');
+  var filtered = q ? _welcomeIslands.filter(function(i){
+    return i.name.toLowerCase().includes(q) || i.atoll.toLowerCase().includes(q);
+  }) : _welcomeIslands;
+  list.innerHTML = filtered.slice(0, 40).map(function(i){
+    return '<div class="welcome-island-row" onclick="goToIsland('' + i.href + '')">' +
+      '<div><div class="welcome-island-name">' + i.name + '</div>' +
+      '<div class="welcome-island-atoll">' + i.atoll + '</div></div>' +
+      '<span class="welcome-island-arrow">›</span></div>';
+  }).join('');
+}
+
+function goToIsland(href) {
+  window.location.href = href;
+}
+
 function showWelcome(name) {
+  _welcomeIslands = ISLANDS.slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
   var screen = document.getElementById('welcome-screen');
   var line1 = document.getElementById('welcome-line1');
   var line2 = document.getElementById('welcome-line2');
-  var cta = document.getElementById('welcome-cta');
+  var searchWrap = document.getElementById('welcome-search-wrap');
+  var islandList = document.getElementById('welcome-island-list');
   screen.classList.add('active');
+  document.body.style.overflow = 'hidden';
   setTimeout(function(){
     line1.style.opacity = '1'; line1.style.transform = 'translateY(0)';
   }, 200);
   setTimeout(function(){
-    typeWriter(line2, "It's time to preserve your island's story.", 38, function(){
+    typeWriter(line2, "Which island are you from?", 42, function(){
+      searchWrap.style.opacity = '1'; searchWrap.style.transform = 'translateY(0)';
       setTimeout(function(){
-        cta.style.opacity = '1'; cta.style.transform = 'translateY(0)';
-      }, 300);
+        islandList.style.opacity = '1';
+        renderWelcomeIslands('');
+        document.getElementById('welcome-search').focus();
+      }, 200);
     });
-  }, 900);
+  }, 700);
 }
 
 function dismissWelcome() {
   var screen = document.getElementById('welcome-screen');
-  screen.style.transition = 'opacity 0.5s ease';
+  screen.style.transition = 'opacity 0.4s ease';
   screen.style.opacity = '0';
-  setTimeout(function(){ screen.style.display = 'none'; }, 500);
+  document.body.style.overflow = '';
+  setTimeout(function(){ screen.style.display = 'none'; }, 400);
 }
 
 function updateAuthUI(session) {
@@ -913,13 +947,18 @@ async function signInWithEmail() {
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<!-- Welcome screen -->
-<div class="welcome-screen" id="welcome-screen" onclick="dismissWelcome()">
-  <div style="text-align:center;width:100%">
+<!-- Island picker screen -->
+<div class="welcome-screen" id="welcome-screen">
+  <div class="welcome-header">
     <div class="welcome-line welcome-name" id="welcome-line1">Welcome.</div>
     <div class="welcome-line welcome-tagline" id="welcome-line2"></div>
-    <button class="welcome-cta" id="welcome-cta" onclick="dismissWelcome()">Start sharing →</button>
   </div>
+  <div class="welcome-search-wrap" id="welcome-search-wrap">
+    <input class="welcome-search" id="welcome-search" type="text" placeholder="Search your island…" autocomplete="off"
+      oninput="renderWelcomeIslands(this.value.toLowerCase().trim())"/>
+  </div>
+  <div class="welcome-island-list" id="welcome-island-list"></div>
+  <button class="welcome-skip" onclick="dismissWelcome()">Skip for now</button>
 </div>
 </body>
 </html>
