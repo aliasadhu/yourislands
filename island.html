@@ -16,6 +16,13 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 /* Header */
 .header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--line);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between}
 .back{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--soft);text-decoration:none;-webkit-tap-highlight-color:transparent}
+.header-auth{position:relative;display:flex;align-items:center}
+.header-user{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--soft);cursor:pointer;padding:4px 0;border:none;background:none;font-family:'Instrument Sans',sans-serif}
+.signout-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#000;padding:12px 16px;min-width:140px;z-index:200}
+.signout-menu.open{display:block}
+.signout-btn{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:none;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif;width:100%;text-align:left;padding:0}
+.toast-msg{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#000;color:#fff;padding:12px 20px;font-size:13px;font-weight:600;font-family:'Instrument Sans',sans-serif;opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:500;white-space:nowrap}
+.toast-msg.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .back:active{color:#000}
 .logo{font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:800;letter-spacing:-0.02em;color:#000}
 
@@ -132,9 +139,16 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
 <body>
 
 <header class="header">
-  <a class="back" href="islands.html">← All Islands</a>
-  <img src="logo.png" style="height:20px;width:auto;display:block;filter:brightness(0)" alt="Local Living"/>
+  <a class="back" href="community.html">← Home</a>
+  <a href="community.html"><img src="logo.png" style="height:20px;width:auto;display:block;filter:brightness(0)" alt="Local Living"/></a>
+  <div class="header-auth" id="header-auth" style="display:none">
+    <button class="header-user" id="header-user-btn" onclick="toggleSignoutMenu()"></button>
+    <div class="signout-menu" id="signout-menu">
+      <button class="signout-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
 </header>
+<div class="toast-msg" id="toast-msg"></div>
 
 <!-- Skeleton shown while loading -->
 <div class="skeleton-hero" id="skeleton">
@@ -283,19 +297,40 @@ let currentUser = null;
 // ── Auth state ────────────────────────────────────────────────────────────────
 db.auth.onAuthStateChange(async (event, session) => {
   currentUser = session?.user || null;
+  updateHeaderAuth(currentUser);
   if (event === 'SIGNED_IN' && currentIsland) {
     closeSignIn();
     await loadContributions(currentIsland.id, currentUser);
+    showToast('Signed in — you can now read all contributions');
+  }
+  if (event === 'SIGNED_OUT') {
+    currentUser = null;
+    updateHeaderAuth(null);
+    if (currentIsland) await loadContributions(currentIsland.id, null);
   }
 });
 
 // ── Load island ───────────────────────────────────────────────────────────────
+function updateHeaderAuth(user){
+  const authEl = document.getElementById('header-auth');
+  const btn = document.getElementById('header-user-btn');
+  if(user){
+    authEl.style.display = 'flex';
+    btn.textContent = user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Account';
+  } else {
+    authEl.style.display = 'none';
+  }
+}
+
 async function loadIsland() {
   const params = new URLSearchParams(window.location.search);
   const key = (params.get('name') || '').toLowerCase();
 
+  if (!key) { window.location.replace('community.html'); return; }
+
   const { data: { session } } = await db.auth.getSession();
   currentUser = session?.user || null;
+  updateHeaderAuth(currentUser);
 
   const { data: island } = await db.from('islands').select('*').eq('id', key).maybeSingle();
 
@@ -362,7 +397,7 @@ async function loadContributions(islandId, user) {
   const topTime = new Date(top.created_at).toLocaleDateString('en', { month:'short', day:'numeric' });
   const topEl = document.createElement('div');
   topEl.className = 'contrib';
-  topEl.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${top.author||'Anonymous'}</span>${top.role ? `<span class="contrib-role"> · ${top.role}</span>` : ''}</div><span class="contrib-type">${typeLabels[top.type]||''}</span></div><p class="contrib-body">${top.body}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${top.id}',${top.likes||0})">♡ <span>${top.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${topTime}</span></div>`;
+  topEl.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${esc(top.author||'Anonymous')}</span>${top.role ? `<span class="contrib-role"> · ${esc(top.role)}</span>` : ''}</div><span class="contrib-type">${esc(typeLabels[top.type]||'')}</span></div><p class="contrib-body">${esc(top.body)}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${esc(top.id)}',${top.likes||0})">♡ <span>${top.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${topTime}</span></div>`;
   list.appendChild(topEl);
 
   if (!user && contribs.length > 1) {
@@ -385,7 +420,7 @@ async function loadContributions(islandId, user) {
       const time = new Date(c.created_at).toLocaleDateString('en', { month:'short', day:'numeric' });
       const el = document.createElement('div');
       el.className = 'contrib';
-      el.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${c.author||'Anonymous'}</span>${c.role ? `<span class="contrib-role"> · ${c.role}</span>` : ''}</div><span class="contrib-type">${typeLabels[c.type]||''}</span></div><p class="contrib-body">${c.body}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${c.id}',${c.likes||0})">♡ <span>${c.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${time}</span></div>`;
+      el.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${esc(c.author||'Anonymous')}</span>${c.role ? `<span class="contrib-role"> · ${esc(c.role)}</span>` : ''}</div><span class="contrib-type">${esc(typeLabels[c.type]||'')}</span></div><p class="contrib-body">${esc(c.body)}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${esc(c.id)}',${c.likes||0})">♡ <span>${c.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${time}</span></div>`;
       list.appendChild(el);
     });
   }
@@ -396,14 +431,14 @@ function openSignIn(){ document.getElementById('signin-modal').classList.add('op
 function closeSignIn(){ document.getElementById('signin-modal').classList.remove('open'); document.body.style.overflow=''; }
 
 async function signInWithGoogle(){
+  sessionStorage.setItem('showWelcome','1');
   await db.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
 }
-async function signInWithApple(){
-  await db.auth.signInWithOAuth({ provider:'apple', options:{ redirectTo: window.location.href } });
-}
+
 async function signInWithEmail(){
   const email = document.querySelector('#signin-modal input[type=email]').value.trim();
-  if(!email){ alert('Please enter your email.'); return; }
+  if(!email || !email.includes('@') || !email.includes('.')){ alert('Please enter a valid email address.'); return; }
+  sessionStorage.setItem('showWelcome','1');
   const { error } = await db.auth.signInWithOtp({ email, options:{ emailRedirectTo: window.location.href } });
   if(error){ alert(error.message); return; }
   document.querySelector('#signin-modal .modal').innerHTML = '<div class="modal-close"><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999">Sign in</span><button class="modal-close-btn" onclick="closeSignIn()">✕</button></div><div style="padding:40px 0 20px;text-align:center"><div class="modal-title" style="margin-bottom:12px">Check your email</div><p style="font-size:14px;color:var(--mid);line-height:1.6">We sent a magic link to <strong>' + email + '</strong>.<br/>Click it to sign in and read contributions.</p></div>';
@@ -454,6 +489,7 @@ async function submitContrib(){
   if(error){ alert('Something went wrong. Please try again.'); return; }
   closeContrib();
   await loadContributions(currentIsland.id, currentUser);
+  showToast('Thank you — your suggestion has been submitted');
 }
 
 async function likeContrib(btn, id, current){
@@ -463,6 +499,34 @@ async function likeContrib(btn, id, current){
   btn.onclick = null;
   await db.from('contributions').update({ likes: n }).eq('id', id);
 }
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function showToast(msg){
+  var t = document.getElementById('toast-msg');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+function toggleSignoutMenu(){
+  document.getElementById('signout-menu').classList.toggle('open');
+}
+
+async function signOut(){
+  await db.auth.signOut();
+  document.getElementById('signout-menu').classList.remove('open');
+  document.getElementById('header-auth').style.display = 'none';
+  currentUser = null;
+  await loadContributions(currentIsland.id, null);
+}
+
+// Close signout menu when clicking outside
+document.addEventListener('click', function(e){
+  var menu = document.getElementById('signout-menu');
+  var btn = document.getElementById('header-user-btn');
+  if(menu && !menu.contains(e.target) && e.target !== btn) menu.classList.remove('open');
+});
 
 loadIsland();
 </script>
