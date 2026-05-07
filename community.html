@@ -787,6 +787,10 @@ db.auth.onAuthStateChange((event, session) => {
 // Check session on page load
 db.auth.getSession().then(({ data: { session } }) => {
   updateAuthUI(session);
+  // Preview mode: ?preview=welcome
+  if (new URLSearchParams(window.location.search).get('preview') === 'welcome') {
+    showWelcome('Your Name');
+  }
 });
 
 function openSignIn(){ document.getElementById('signin-modal').classList.add('open'); document.body.style.overflow='hidden'; }
