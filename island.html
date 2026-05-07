@@ -427,13 +427,13 @@ function openSignIn(){ document.getElementById('signin-modal').classList.add('op
 function closeSignIn(){ document.getElementById('signin-modal').classList.remove('open'); document.body.style.overflow=''; }
 
 async function signInWithGoogle(){
-  await db.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
+  await db.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: 'https://aliasadhu.github.io/local-living-mockup/island.html' } });
 }
 
 async function signInWithEmail(){
   const email = document.querySelector('#signin-modal input[type=email]').value.trim();
   if(!email || !email.includes('@') || !email.includes('.')){ alert('Please enter a valid email address.'); return; }
-  const { error } = await db.auth.signInWithOtp({ email, options:{ emailRedirectTo: window.location.href } });
+  const { error } = await db.auth.signInWithOtp({ email, options:{ emailRedirectTo: 'https://aliasadhu.github.io/local-living-mockup/island.html' } });
   if(error){ alert(error.message); return; }
   document.querySelector('#signin-modal .modal').innerHTML = '<div class="modal-close"><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999">Sign in</span><button class="modal-close-btn" onclick="closeSignIn()">✕</button></div><div style="padding:40px 0 20px;text-align:center"><div class="modal-title" style="margin-bottom:12px">Check your email</div><p style="font-size:14px;color:var(--mid);line-height:1.6">We sent a magic link to <strong>' + email + '</strong>.<br/>Click it to sign in and read contributions.</p></div>';
 }

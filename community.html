@@ -890,7 +890,7 @@ async function signInWithGoogle() {
   sessionStorage.setItem('showWelcome', '1');
   await db.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.href }
+    options: { redirectTo: 'https://aliasadhu.github.io/local-living-mockup/community.html' }
   });
 }
 
@@ -902,7 +902,7 @@ async function signInWithEmail() {
   if (btn) { btn.textContent = 'Sending…'; btn.disabled = true; }
   const { error } = await db.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: window.location.href }
+    options: { emailRedirectTo: 'https://aliasadhu.github.io/local-living-mockup/community.html' }
   });
   if (error) {
     if (btn) { btn.textContent = 'Continue with email →'; btn.disabled = false; }
