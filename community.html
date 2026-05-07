@@ -337,6 +337,14 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#000;color:#fff;padding:12px 20px;font-size:13px;font-weight:600;font-family:'Instrument Sans',sans-serif;opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:400;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+/* Welcome screen */
+.welcome-screen{position:fixed;inset:0;background:#000;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;pointer-events:none;opacity:0}
+.welcome-screen.active{pointer-events:all;opacity:1}
+.welcome-line{font-family:'Bricolage Grotesque',sans-serif;color:#fff;opacity:0;transform:translateY(16px);transition:opacity 0.7s ease,transform 0.7s ease}
+.welcome-name{font-size:clamp(36px,10vw,64px);font-weight:800;line-height:1.1;margin-bottom:12px}
+.welcome-tagline{font-size:clamp(16px,4.5vw,22px);font-weight:300;color:#999;line-height:1.5;text-align:center;max-width:320px}
+.welcome-cta{margin-top:48px;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#fff;opacity:0;transform:translateY(8px);transition:opacity 0.5s ease 1.8s,transform 0.5s ease 1.8s;border-bottom:1px solid #fff;padding-bottom:2px;background:none;border-top:none;border-left:none;border-right:none;cursor:pointer;font-family:'Instrument Sans',sans-serif}
+@keyframes welcomeFadeOut{from{opacity:1}to{opacity:0}}
 .modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:#000;margin-bottom:6px}
 .modal-sub{font-size:13px;color:#555;margin-bottom:24px}
 .signin-btn{width:100%;display:flex;align-items:center;gap:12px;background:#fff;border:1.5px solid #E8E8E8;padding:14px 16px;font-size:14px;font-weight:600;color:#000;cursor:pointer;font-family:'Instrument Sans',sans-serif;margin-bottom:10px;-webkit-tap-highlight-color:transparent;transition:border-color 0.15s}
@@ -728,6 +736,31 @@ function showToast(msg) {
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
+function showWelcome(name) {
+  var screen = document.getElementById('welcome-screen');
+  var line1 = document.getElementById('welcome-line1');
+  var line2 = document.getElementById('welcome-line2');
+  var cta = document.getElementById('welcome-cta');
+  screen.classList.add('active');
+  // Animate lines in sequence
+  setTimeout(function(){
+    line1.style.opacity = '1'; line1.style.transform = 'translateY(0)';
+  }, 200);
+  setTimeout(function(){
+    line2.style.opacity = '1'; line2.style.transform = 'translateY(0)';
+  }, 800);
+  setTimeout(function(){
+    cta.style.opacity = '1'; cta.style.transform = 'translateY(0)';
+  }, 1800);
+}
+
+function dismissWelcome() {
+  var screen = document.getElementById('welcome-screen');
+  screen.style.transition = 'opacity 0.5s ease';
+  screen.style.opacity = '0';
+  setTimeout(function(){ screen.style.display = 'none'; }, 500);
+}
+
 function updateAuthUI(session) {
   const btn = document.querySelector('.sign-in');
   const shareBtn = document.querySelector('.btn-primary');
@@ -747,7 +780,7 @@ db.auth.onAuthStateChange((event, session) => {
     updateAuthUI(session);
     // Show welcome toast after Google/email sign-in redirect
     const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'you';
-    showToast('Welcome, ' + name + ' — now share your island story →');
+    showWelcome(name);
   }
 });
 
@@ -818,5 +851,13 @@ async function signInWithEmail() {
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<!-- Welcome screen -->
+<div class="welcome-screen" id="welcome-screen" onclick="dismissWelcome()">
+  <div style="text-align:center;width:100%">
+    <div class="welcome-line welcome-name" id="welcome-line1">Welcome.</div>
+    <div class="welcome-line welcome-tagline" id="welcome-line2">It's time to preserve<br>your island's story.</div>
+    <button class="welcome-cta" id="welcome-cta" onclick="dismissWelcome()">Start sharing →</button>
+  </div>
+</div>
 </body>
 </html>
