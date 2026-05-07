@@ -164,8 +164,8 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
 <body>
 
 <header class="header">
-  <a class="back" href="community.html">← Home</a>
-  <a href="community.html"><img src="logo.png" style="height:20px;width:auto;display:block;filter:brightness(0)" alt="Local Living"/></a>
+  <a class="back" href="index.html">← Home</a>
+  <a href="index.html"><img src="logo.png" style="height:20px;width:auto;display:block;filter:brightness(0)" alt="Local Living"/></a>
   <div class="header-auth" id="header-auth" style="display:none;align-items:center">
     <div id="island-avatar-wrap" onclick="toggleSignoutMenu()" style="cursor:pointer"></div>
     <div class="signout-menu" id="signout-menu">
@@ -385,7 +385,7 @@ async function loadIsland() {
   const params = new URLSearchParams(window.location.search);
   const key = (params.get('name') || '').toLowerCase();
 
-  if (!key) { window.location.replace('community.html'); return; }
+  if (!key) { window.location.replace('index.html'); return; }
 
   const { data: { session } } = await db.auth.getSession();
   currentUser = session?.user || null;
