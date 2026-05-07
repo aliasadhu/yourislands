@@ -459,7 +459,7 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
       <button class="modal-close-btn" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-title">Add your island</div>
-    <p class="modal-sub">If your island isn't listed, add it here. We'll create a page for it so your community can start documenting.</p>
+    <p class="modal-sub">If your island isn't listed, submit it here. We'll review and add it so your community can start documenting.</p>
     <label class="field-label">Island name</label>
     <input class="field" type="text" id="add-name" placeholder="e.g. Maalhos"/>
     <label class="field-label">Atoll</label>
@@ -491,23 +491,18 @@ async function submitIsland(){
   const atoll = document.getElementById('add-atoll').value.trim();
   if(!name){ document.getElementById('add-name').focus(); return; }
 
-  const id = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
   const btn = document.querySelector('.submit-btn');
-  btn.textContent = 'Adding…'; btn.disabled = true;
+  btn.textContent = 'Submitting…'; btn.disabled = true;
 
-  const { error } = await db.from('islands').insert({ id, name, atoll }).select();
+  const { error } = await db.from('pending_islands').insert({ name, atoll });
   btn.textContent = 'Add island →'; btn.disabled = false;
 
-  if(error && error.code === '23505'){
-    showToast(name + ' is already in the list');
-    closeAddModal();
-    return;
-  }
   if(error){ showToast('Something went wrong — try again'); return; }
 
   closeAddModal();
-  showToast(name + ' added! Opening island page…');
-  setTimeout(function(){ window.location.href = 'island.html?name=' + id; }, 1500);
+  document.getElementById('add-name').value = '';
+  document.getElementById('add-atoll').value = '';
+  showToast(name + ' submitted — we will review and add it shortly');
 }
 </script>
 
