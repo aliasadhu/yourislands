@@ -23,6 +23,13 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 .signout-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#000;padding:12px 16px;min-width:140px;z-index:200}
 .signout-menu.open{display:block}
 .signout-btn{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:none;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif;width:100%;text-align:left;padding:0}
+.share-panel{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:600;display:none;align-items:center;justify-content:center;padding:24px}
+.share-panel.open{display:flex}
+.share-box{background:#fff;padding:32px 24px;width:100%;max-width:380px;text-align:center}
+.share-box-title{font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;color:#000;margin-bottom:8px;line-height:1.1}
+.share-box-sub{font-size:14px;color:var(--mid);line-height:1.6;margin-bottom:24px}
+.share-copy-btn{width:100%;background:#000;color:#fff;border:none;padding:14px;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;font-family:'Instrument Sans',sans-serif;margin-bottom:10px}
+.share-dismiss{font-size:11px;color:var(--soft);cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;background:none;border:none;font-family:'Instrument Sans',sans-serif}
 .toast-msg{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#000;color:#fff;padding:12px 20px;font-size:13px;font-weight:600;font-family:'Instrument Sans',sans-serif;opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:500;white-space:nowrap}
 .toast-msg.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .back:active{color:#000}
@@ -168,6 +175,7 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
   </div>
   <h1 class="island-name" id="island-name"></h1>
   <p class="island-tagline" id="island-tagline"></p>
+  <p class="island-urgency" id="island-urgency" style="display:none;font-size:13px;font-weight:600;color:#000;letter-spacing:0.04em;margin-bottom:24px;padding:12px 16px;border-left:3px solid #000;background:var(--surface)"></p>
   <div class="themes" id="themes"></div>
 </section>
 
@@ -257,7 +265,8 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
     <label class="field-label">WhatsApp number <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">(optional — so we can reach you when visiting)</span></label>
     <input class="field" type="tel" placeholder="+960 xxx xxxx" id="f-whatsapp"/>
     <label class="field-label">Your suggestion</label>
-    <textarea class="field" placeholder="What should we document, and why does it matter?" id="f-body"></textarea>
+    <textarea class="field" placeholder="e.g. My grandfather Ibrahim, 82, knows every traditional fishing technique. Or: the old mosque ruins near the lagoon that locals call Fenfaiy…" id="f-body" style="height:120px"></textarea>
+    <p style="font-size:11px;color:var(--soft);margin-top:-12px;margin-bottom:18px;line-height:1.6">Think of an elder with untold stories, a disappearing craft, or a place only locals know. Anything is enough — we follow up.</p>
     <label class="field-label">Attach media <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">(optional)</span></label>
     <div class="media-row">
       <label class="media-upload" id="photo-box">
@@ -279,6 +288,17 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
       <button class="modal-cancel" onclick="closeContrib()">Cancel</button>
       <button class="modal-submit-contrib" onclick="submitContrib()">Submit →</button>
     </div>
+  </div>
+</div>
+
+<!-- Share panel -->
+<div class="share-panel" id="share-panel">
+  <div class="share-box">
+    <div class="share-box-title" id="share-box-title">Your story is live.</div>
+    <p class="share-box-sub" id="share-box-sub">Share this page with others from your island so they can add their voices too.</p>
+    <button class="share-copy-btn" onclick="copyIslandLink()">Copy island link →</button>
+    <br/>
+    <button class="share-dismiss" onclick="closeSharePanel()">Maybe later</button>
   </div>
 </div>
 
@@ -343,7 +363,7 @@ async function loadIsland() {
     const displayName = key.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
     document.title = displayName + ' — Local Living';
     document.getElementById('bf-island-name').textContent = displayName;
-    document.getElementById('bf-cta-label').textContent = 'Help us document ' + displayName + '.';
+    document.getElementById('bf-cta-label').textContent = 'Be the first voice from ' + displayName + '.';
     document.getElementById('contrib-modal-sub').textContent = 'For ' + displayName;
     document.getElementById('be-first').style.display = 'block';
     document.getElementById('footer').style.display = 'flex';
@@ -359,6 +379,11 @@ async function loadIsland() {
   document.getElementById('trip-tag').textContent = island.index_label || '';
   document.getElementById('island-name').textContent = island.name;
   document.getElementById('island-tagline').textContent = island.tagline || '';
+  const urgencyEl = document.getElementById('island-urgency');
+  if (urgencyEl) {
+    urgencyEl.textContent = 'Stories from this island exist nowhere else. Once elders pass, they are gone.';
+    urgencyEl.style.display = 'block';
+  }
   const themesEl = document.getElementById('themes');
   (island.themes || []).forEach(t => {
     const span = document.createElement('span');
@@ -367,7 +392,7 @@ async function loadIsland() {
     themesEl.appendChild(span);
   });
   document.getElementById('hero').style.display = 'block';
-  document.getElementById('cta-label').textContent = 'Help us document ' + island.name + '.';
+  document.getElementById('cta-label').textContent = 'Your memories of ' + island.name + ' exist nowhere else.';
   document.getElementById('cta-block').style.display = 'block';
   document.getElementById('contrib-modal-sub').textContent = 'For ' + island.name + (island.atoll ? ', ' + island.atoll : '');
   document.getElementById('footer-atoll').textContent = island.atoll || '';
@@ -395,7 +420,8 @@ async function loadContributions(islandId, user) {
   list.style.display = 'flex';
   list.innerHTML = '';
 
-  // Always show top contribution
+  // Show top 2 contributions free
+  const freeCount = 2;
   const top = contribs[0];
   const topTime = new Date(top.created_at).toLocaleDateString('en', { month:'short', day:'numeric' });
   const topEl = document.createElement('div');
@@ -403,12 +429,20 @@ async function loadContributions(islandId, user) {
   topEl.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${esc(top.author||'Anonymous')}</span>${top.role ? `<span class="contrib-role"> · ${esc(top.role)}</span>` : ''}</div><span class="contrib-type">${esc(typeLabels[top.type]||'')}</span></div><p class="contrib-body">${esc(top.body)}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${esc(top.id)}',${top.likes||0})">♡ <span>${top.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${topTime}</span></div>`;
   list.appendChild(topEl);
 
-  if (!user && contribs.length > 1) {
-    // Show gate after top contribution
-    const remaining = contribs.length - 1;
+  if (!user && contribs.length > freeCount) {
+    // Show second contribution free
+    if (contribs[1]) {
+      const c2 = contribs[1];
+      const t2 = new Date(c2.created_at).toLocaleDateString('en', { month:'short', day:'numeric' });
+      const el2 = document.createElement('div');
+      el2.className = 'contrib';
+      el2.innerHTML = `<div class="contrib-header"><div><span class="contrib-author">${esc(c2.author||'Anonymous')}</span>${c2.role ? `<span class="contrib-role"> · ${esc(c2.role)}</span>` : ''}</div><span class="contrib-type">${esc(typeLabels[c2.type]||'')}</span></div><p class="contrib-body">${esc(c2.body)}</p><div class="contrib-footer"><button class="like-btn" onclick="likeContrib(this,'${esc(c2.id)}',${c2.likes||0})">♡ <span>${c2.likes||0}</span></button><span style="font-size:10px;color:var(--soft)">${t2}</span></div>`;
+      list.appendChild(el2);
+    }
+    const remaining = contribs.length - freeCount;
     const avatarsEl = document.getElementById('gate-avatars');
     avatarsEl.innerHTML = '';
-    contribs.slice(1, 4).forEach(c => {
+    contribs.slice(freeCount, freeCount + 3).forEach(c => {
       const div = document.createElement('div');
       div.className = 'gate-avatar';
       div.textContent = (c.author || '?')[0].toUpperCase();
@@ -490,7 +524,7 @@ async function submitContrib(){
   if(error){ alert('Something went wrong. Please try again.'); return; }
   closeContrib();
   await loadContributions(currentIsland.id, currentUser);
-  showToast('Thank you — your suggestion has been submitted');
+  openSharePanel();
 }
 
 async function likeContrib(btn, id, current){
@@ -528,6 +562,26 @@ document.addEventListener('click', function(e){
   var wrap = document.getElementById('island-avatar-wrap');
   if(menu && !menu.contains(e.target) && !(wrap && wrap.contains(e.target))) menu.classList.remove('open');
 });
+
+function openSharePanel() {
+  const name = currentIsland?.name || 'this island';
+  document.getElementById('share-box-title').textContent = 'Your story is live.';
+  document.getElementById('share-box-sub').textContent = 'Share ' + name + '’s page with others from your island so they can add their voices too.';
+  document.getElementById('share-panel').classList.add('open');
+}
+
+function closeSharePanel() {
+  document.getElementById('share-panel').classList.remove('open');
+}
+
+function copyIslandLink() {
+  const url = window.location.href.split('?')[0] + '?name=' + (currentIsland?.id || '');
+  navigator.clipboard.writeText(url).then(function(){
+    const btn = document.querySelector('.share-copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(function(){ btn.textContent = 'Copy island link →'; }, 2000);
+  });
+}
 
 loadIsland();
 </script>
