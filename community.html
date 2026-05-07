@@ -506,9 +506,9 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 </section>
 
 <div class="stats">
-  <div class="stat"><div class="stat-val">87</div><div class="stat-label">Islands waiting</div></div>
-  <div class="stat"><div class="stat-val">142</div><div class="stat-label">Stories saved</div></div>
-  <div class="stat"><div class="stat-val">38</div><div class="stat-label">Who stepped up</div></div>
+  <div class="stat"><div class="stat-val" id="stat-waiting">—</div><div class="stat-label">Islands waiting</div></div>
+  <div class="stat"><div class="stat-val" id="stat-stories">—</div><div class="stat-label">Stories saved</div></div>
+  <div class="stat"><div class="stat-val" id="stat-contributors">—</div><div class="stat-label">Who stepped up</div></div>
 </div>
 <div class="fomo-bar">Your island may not have a single story documented yet.</div>
 
@@ -729,6 +729,25 @@ document.getElementById('search').addEventListener('input',function(){
 })();
 
 render(ISLANDS);
+
+// Load real stats from Supabase
+(async function(){
+  const [islandsRes, contribsRes] = await Promise.all([
+    db.from('islands').select('id', { count: 'exact', head: true }),
+    db.from('contributions').select('author', { count: 'exact' })
+  ]);
+  const totalIslands = 110; // total inhabited islands
+  const documented = islandsRes.count || 0;
+  const waiting = totalIslands - documented;
+  const stories = contribsRes.count || 0;
+  const contributors = contribsRes.data
+    ? new Set(contribsRes.data.map(c => c.author)).size
+    : 0;
+  document.getElementById('stat-waiting').textContent = waiting;
+  document.getElementById('stat-stories').textContent = stories;
+  document.getElementById('stat-contributors').textContent = contributors;
+})();
+
 // Sticky share bar
 (function(){
   var bar = document.getElementById('sticky-share');
