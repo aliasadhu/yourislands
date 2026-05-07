@@ -69,9 +69,7 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 .gate-btn{display:inline-flex;align-items:center;background:#000;color:#fff;border:none;padding:14px 28px;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;font-family:'Instrument Sans',sans-serif}
 
 /* Not found */
-.not-found{padding:80px 20px;text-align:center;display:none}
-.not-found h2{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;margin-bottom:12px}
-.not-found p{font-size:14px;color:var(--mid);line-height:1.6}
+.not-found{padding:60px 20px 80px;text-align:center;display:none}
 
 /* Footer */
 .footer{padding:24px 20px 56px;border-top:1px solid var(--line);font-size:11px;color:var(--soft);display:flex;justify-content:space-between}
@@ -177,10 +175,18 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
   <div class="contrib-list" id="contrib-list" style="display:none"></div>
 </section>
 
-<!-- Not found -->
-<div class="not-found" id="not-found">
-  <h2>Island not found</h2>
-  <p>We haven't added this island yet — check back soon, or <a href="islands.html" style="color:#000">browse all islands</a>.</p>
+<!-- Be first (shown when no DB entry) -->
+<div class="not-found" id="be-first" style="display:none">
+  <div class="island-meta" style="justify-content:center">
+    <span class="atoll-tag" id="bf-atoll-tag"></span>
+  </div>
+  <h1 class="island-name" id="bf-island-name" style="font-size:clamp(52px,14vw,80px);margin-bottom:16px"></h1>
+  <p style="font-size:15px;color:var(--mid);font-style:italic;margin-bottom:32px">No stories documented yet.</p>
+  <div style="border:2px solid #000;padding:28px 24px;text-align:left;max-width:400px;margin:0 auto">
+    <div class="cta-label" id="bf-cta-label" style="font-size:clamp(24px,7vw,40px);margin-bottom:12px"></div>
+    <p class="cta-text">Be the first to share something worth remembering — a person, a place, a practice. We are here to document it properly, with your help.</p>
+    <button class="cta-btn" style="margin-top:6px" onclick="openContrib()">Be the first to share →</button>
+  </div>
 </div>
 
 <div class="footer" id="footer" style="display:none">
@@ -307,8 +313,15 @@ function loadIsland() {
     document.getElementById('skeleton').style.display = 'none';
 
     if (!island) {
-      document.getElementById('not-found').style.display = 'block';
+      // Format name from URL key: "haa-alifu" → "Haa Alifu", "utheemu" → "Utheemu"
+      const displayName = key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      document.title = displayName + ' — Local Living';
+      document.getElementById('bf-island-name').textContent = displayName;
+      document.getElementById('bf-cta-label').textContent = 'Are you from ' + displayName + '?';
+      document.getElementById('contrib-modal-sub').textContent = 'For ' + displayName;
+      document.getElementById('be-first').style.display = 'block';
       document.getElementById('footer').style.display = 'flex';
+      document.getElementById('footer-atoll').textContent = displayName;
       return;
     }
 
