@@ -242,6 +242,8 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
     </div>
     <label class="field-label">Your name</label>
     <input class="field" type="text" placeholder="How locals should credit you" id="f-name"/>
+    <label class="field-label">WhatsApp number <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">(optional — so we can reach you when visiting)</span></label>
+    <input class="field" type="tel" placeholder="+960 xxx xxxx" id="f-whatsapp"/>
     <label class="field-label">Your suggestion</label>
     <textarea class="field" placeholder="What should we document, and why does it matter?" id="f-body"></textarea>
     <label class="field-label">Attach media <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">(optional)</span></label>
@@ -424,6 +426,7 @@ function previewFile(input, boxId, nameId){
 async function submitContrib(){
   if(!currentUser){ closeContrib(); openSignIn(); return; }
   const name = document.getElementById('f-name').value.trim();
+  const whatsapp = document.getElementById('f-whatsapp').value.trim();
   const body = document.getElementById('f-body').value.trim();
   const type = document.querySelector('.type-btn.selected').dataset.type;
   if(!body){ alert('Please add your suggestion.'); return; }
@@ -445,7 +448,8 @@ async function submitContrib(){
   const { error } = await db.from('contributions').insert({
     island_id: currentIsland.id,
     author: name || currentUser.email?.split('@')[0] || 'Anonymous',
-    type, body, media_url
+    type, body, media_url,
+    whatsapp: whatsapp || null
   });
   if(error){ alert('Something went wrong. Please try again.'); return; }
   closeContrib();
