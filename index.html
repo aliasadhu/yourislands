@@ -262,7 +262,7 @@ function renderAtoll(atoll, idx, total){
   atoll.islands.forEach((island, i) => {
     const btn = document.createElement('button');
     btn.className = 'island-row';
-    const slug = island.toLowerCase().replace(/[^a-z0-9]+/g,'-'); const href = island === 'Utheemu' ? 'utheemu.html' : '#'; btn.innerHTML = `<span class="island-num">${String(i+1).padStart(2,'0')}</span><span class="island-name">${island}</span><span class="island-arrow">→</span>`; if(href !== '#') btn.onclick = () => window.location.href = href;
+    const slug = island.toLowerCase().replace(/[^a-z0-9]+/g,'-'); const href = island ? 'island.html?name=' + island.toLowerCase().replace(/[^a-z0-9]+/g,'-') : '#'; btn.innerHTML = `<span class="island-num">${String(i+1).padStart(2,'0')}</span><span class="island-name">${island}</span><span class="island-arrow">→</span>`; if(href !== '#') btn.onclick = () => window.location.href = href;
     inner.appendChild(btn);
   });
 
