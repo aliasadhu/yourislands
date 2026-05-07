@@ -102,6 +102,20 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
   .isl-row{padding:16px 56px 16px 94px}
   .footer{padding:40px 56px 64px}
 }
+/* Add island modal */
+.modal-bg{display:none;position:fixed;inset:0;background:#fff;z-index:300;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-bg.open{display:block}
+.modal{background:#fff;padding:28px 20px 60px;width:100%;max-width:480px;margin:0 auto}
+.modal-close-bar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin:-28px -20px 28px;z-index:1}
+.modal-close-btn{background:none;border:none;font-size:22px;cursor:pointer;color:#000;line-height:1;padding:4px}
+.modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;color:#000;margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:28px}
+.field-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--soft);margin-bottom:8px;display:block}
+.field{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);padding:10px 0;font-size:16px;color:#000;font-family:'Instrument Sans',sans-serif;outline:none;margin-bottom:24px}
+.field::placeholder{color:var(--soft)}
+.submit-btn{width:100%;background:#000;border:none;padding:14px;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#fff;cursor:pointer;font-family:'Instrument Sans',sans-serif}
+.toast-msg{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#000;color:#fff;padding:12px 20px;font-size:13px;font-weight:600;font-family:'Instrument Sans',sans-serif;opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:400;white-space:nowrap}
+.toast-msg.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -117,7 +131,7 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 </div>
 
 <div style="padding:10px 20px;border-bottom:1px solid var(--line);background:#F5F5F5;text-align:center">
-  <span style="font-size:12px;color:#555">Your island isn't here? <a href="index.html" style="color:#000;font-weight:700;text-decoration:underline">You can add it →</a></span>
+  <span style="font-size:12px;color:#555">Your island isn't here? <a href="#" onclick="openAddModal();return false;" style="color:#000;font-weight:700;text-decoration:underline">You can add it →</a></span>
 </div>
 <div class="search-wrap">
   <div class="search-bar">
@@ -436,6 +450,66 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
   </div>
   <div style="font-size:11px;color:var(--soft)">v.2026.06</div>
 </footer>
+
+<!-- Add island modal -->
+<div class="modal-bg" id="add-modal">
+  <div class="modal">
+    <div class="modal-close-bar">
+      <span style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#999">Add your island</span>
+      <button class="modal-close-btn" onclick="closeAddModal()">✕</button>
+    </div>
+    <div class="modal-title">Add your island</div>
+    <p class="modal-sub">If your island isn't listed, add it here. We'll create a page for it so your community can start documenting.</p>
+    <label class="field-label">Island name</label>
+    <input class="field" type="text" id="add-name" placeholder="e.g. Maalhos"/>
+    <label class="field-label">Atoll</label>
+    <input class="field" type="text" id="add-atoll" placeholder="e.g. Baa Atoll"/>
+    <button class="submit-btn" onclick="submitIsland()">Add island →</button>
+  </div>
+</div>
+<div class="toast-msg" id="toast-msg"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const db = supabase.createClient(
+  'https://ucypjarkyhhwweobdsyv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjeXBqYXJreWhod3dlb2Jkc3l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMjE5NjUsImV4cCI6MjA5MzY5Nzk2NX0.ptgnJLcaJBurTkDDIAC93nbnhRsadmbruil_wPviORo'
+);
+
+function openAddModal(){ document.getElementById('add-modal').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeAddModal(){ document.getElementById('add-modal').classList.remove('open'); document.body.style.overflow=''; }
+
+function showToast(msg){
+  var t = document.getElementById('toast-msg');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3500);
+}
+
+async function submitIsland(){
+  const name = document.getElementById('add-name').value.trim();
+  const atoll = document.getElementById('add-atoll').value.trim();
+  if(!name){ document.getElementById('add-name').focus(); return; }
+
+  const id = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = 'Adding…'; btn.disabled = true;
+
+  const { error } = await db.from('islands').insert({ id, name, atoll }).select();
+  btn.textContent = 'Add island →'; btn.disabled = false;
+
+  if(error && error.code === '23505'){
+    showToast(name + ' is already in the list');
+    closeAddModal();
+    return;
+  }
+  if(error){ showToast('Something went wrong — try again'); return; }
+
+  closeAddModal();
+  showToast(name + ' added! Opening island page…');
+  setTimeout(function(){ window.location.href = 'island.html?name=' + id; }, 1500);
+}
+</script>
 
 <script>
 function toggle(btn){
