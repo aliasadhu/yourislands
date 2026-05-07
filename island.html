@@ -18,6 +18,8 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 .back{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--soft);text-decoration:none;-webkit-tap-highlight-color:transparent}
 .header-auth{position:relative;display:flex;align-items:center}
 .header-user{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--soft);cursor:pointer;padding:4px 0;border:none;background:none;font-family:'Instrument Sans',sans-serif}
+.user-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;cursor:pointer;display:block}
+.user-avatar-initials{width:30px;height:30px;border-radius:50%;background:#000;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif}
 .signout-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#000;padding:12px 16px;min-width:140px;z-index:200}
 .signout-menu.open{display:block}
 .signout-btn{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:none;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif;width:100%;text-align:left;padding:0}
@@ -141,8 +143,8 @@ textarea.field{resize:none;height:90px;border:1px solid var(--line);padding:10px
 <header class="header">
   <a class="back" href="community.html">← Home</a>
   <a href="community.html"><img src="logo.png" style="height:20px;width:auto;display:block;filter:brightness(0)" alt="Local Living"/></a>
-  <div class="header-auth" id="header-auth" style="display:none">
-    <button class="header-user" id="header-user-btn" onclick="toggleSignoutMenu()"></button>
+  <div class="header-auth" id="header-auth" style="display:none;align-items:center">
+    <div id="island-avatar-wrap" onclick="toggleSignoutMenu()" style="cursor:pointer"></div>
     <div class="signout-menu" id="signout-menu">
       <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
@@ -309,12 +311,17 @@ db.auth.onAuthStateChange(async (event, session) => {
 // ── Load island ───────────────────────────────────────────────────────────────
 function updateHeaderAuth(user){
   const authEl = document.getElementById('header-auth');
-  const btn = document.getElementById('header-user-btn');
+  const wrap = document.getElementById('island-avatar-wrap');
   if(user){
     authEl.style.display = 'flex';
-    btn.textContent = user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Account';
+    const name = user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Me';
+    const avatarUrl = user.user_metadata?.avatar_url;
+    if(wrap) wrap.innerHTML = avatarUrl
+      ? `<img class="user-avatar" src="${avatarUrl}" alt="${name}"/>`
+      : `<div class="user-avatar-initials">${name[0].toUpperCase()}</div>`;
   } else {
     authEl.style.display = 'none';
+    if(wrap) wrap.innerHTML = '';
   }
 }
 
@@ -336,7 +343,7 @@ async function loadIsland() {
     const displayName = key.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
     document.title = displayName + ' — Local Living';
     document.getElementById('bf-island-name').textContent = displayName;
-    document.getElementById('bf-cta-label').textContent = 'Are you from ' + displayName + '?';
+    document.getElementById('bf-cta-label').textContent = 'Help us document ' + displayName + '.';
     document.getElementById('contrib-modal-sub').textContent = 'For ' + displayName;
     document.getElementById('be-first').style.display = 'block';
     document.getElementById('footer').style.display = 'flex';
@@ -360,7 +367,7 @@ async function loadIsland() {
     themesEl.appendChild(span);
   });
   document.getElementById('hero').style.display = 'block';
-  document.getElementById('cta-label').textContent = 'Are you from ' + island.name + '?';
+  document.getElementById('cta-label').textContent = 'Help us document ' + island.name + '.';
   document.getElementById('cta-block').style.display = 'block';
   document.getElementById('contrib-modal-sub').textContent = 'For ' + island.name + (island.atoll ? ', ' + island.atoll : '');
   document.getElementById('footer-atoll').textContent = island.atoll || '';
@@ -518,8 +525,8 @@ async function signOut(){
 // Close signout menu when clicking outside
 document.addEventListener('click', function(e){
   var menu = document.getElementById('signout-menu');
-  var btn = document.getElementById('header-user-btn');
-  if(menu && !menu.contains(e.target) && e.target !== btn) menu.classList.remove('open');
+  var wrap = document.getElementById('island-avatar-wrap');
+  if(menu && !menu.contains(e.target) && !(wrap && wrap.contains(e.target))) menu.classList.remove('open');
 });
 
 loadIsland();
