@@ -334,6 +334,8 @@ html,body{background:#fff;font-family:'Instrument Sans',sans-serif;color:#000;-w
 .modal{background:#fff;padding:28px 20px 60px;width:100%;max-width:480px;margin:0 auto;animation:fadeIn 0.3s ease forwards}
 .modal-close{position:sticky;top:0;background:#fff;border-bottom:1px solid #E8E8E8;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin:-28px -20px 28px;z-index:1}
 .modal-close-btn{background:none;border:none;font-size:22px;cursor:pointer;color:#000;padding:4px;line-height:1}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#000;color:#fff;padding:12px 20px;font-size:13px;font-weight:600;font-family:'Instrument Sans',sans-serif;opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:400;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:#000;margin-bottom:6px}
 .modal-sub{font-size:13px;color:#555;margin-bottom:24px}
@@ -719,14 +721,39 @@ const SUPABASE_URL = 'https://ucypjarkyhhwweobdsyv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjeXBqYXJreWhod3dlb2Jkc3l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1NTExNjEsImV4cCI6MjA2MjEyNzE2MX0.QvSl-e2GxM8LjKDqMtAF9W0tBNqxS-5OIijBJH91jJk';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+function updateAuthUI(session) {
+  const btn = document.querySelector('.sign-in');
+  const shareBtn = document.querySelector('.btn-primary');
+  if (session) {
+    const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'you';
+    if (btn) { btn.textContent = 'Signed in'; btn.onclick = null; btn.style.cursor = 'default'; }
+    if (shareBtn) { shareBtn.onclick = function(){ window.location.href = 'island.html'; }; }
+  } else {
+    if (btn) { btn.textContent = 'Sign in'; btn.onclick = openSignIn; }
+  }
+}
+
 // Handle auth redirect (magic link / OAuth callback)
 db.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_IN' && session) {
     closeSignIn();
-    // Update sign-in button to show user is signed in
-    const btn = document.querySelector('.sign-in');
-    if (btn) btn.textContent = 'Signed in';
+    updateAuthUI(session);
+    // Show welcome toast after Google/email sign-in redirect
+    const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'you';
+    showToast('Welcome, ' + name + ' — now share your island story →');
   }
+});
+
+// Check session on page load
+db.auth.getSession().then(({ data: { session } }) => {
+  updateAuthUI(session);
 });
 
 function openSignIn(){ document.getElementById('signin-modal').classList.add('open'); document.body.style.overflow='hidden'; }
@@ -790,5 +817,6 @@ async function signInWithEmail() {
     <p style="font-size:11px;color:var(--soft);text-align:center;line-height:1.6;margin-top:4px">By continuing you agree to our terms. Your contributions remain yours.</p>
   </div>
 </div>
+<div class="toast" id="toast"></div>
 </body>
 </html>
